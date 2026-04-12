@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { HousingType, PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import bcrypt from "bcryptjs";
@@ -24,11 +24,11 @@ async function main() {
     },
   });
 
-  const listings = [
+  const listings: Array<Parameters<typeof prisma.listing.create>[0]["data"]> = [
     {
       title: "L'Escale Residence - Modern Studio",
       description: "Located in the heart of Maarif, this modern studio is designed specifically for students seeking a quiet and secure environment.",
-      type: "STUDIO",
+      type: HousingType.STUDIO,
       city: "Casablanca",
       neighborhood: "Maarif",
       address: "15 Rue de la Liberté",
@@ -43,14 +43,14 @@ async function main() {
       hostId: user.id,
       images: {
         create: [
-          { url: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=2070", isMain: true },
+          { url: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=2070" },
         ],
       },
     },
     {
       title: "Les Arcades du Savoir",
       description: "Premium shared apartment near UM6P Rabat. Includes library and rooftop access.",
-      type: "ROOM",
+      type: HousingType.ROOM,
       city: "Rabat",
       neighborhood: "Agdal",
       address: "42 Avenue Mohammed V",
@@ -65,7 +65,7 @@ async function main() {
       hostId: user.id,
       images: {
         create: [
-          { url: "https://images.unsplash.com/photo-1493809842364-78817add7ffb?q=80&w=2070", isMain: true },
+          { url: "https://images.unsplash.com/photo-1493809842364-78817add7ffb?q=80&w=2070" },
         ],
       },
     },

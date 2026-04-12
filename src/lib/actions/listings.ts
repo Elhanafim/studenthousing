@@ -2,40 +2,39 @@
 
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
-import { auth } from "@/lib/auth"; // We'll need to update auth.ts to export this
+import { auth } from "@/lib/auth";
 
 const listingSchema = z.object({
-  title: z.string().min(5, "Title must be at least 5 characters"),
-  description: z.string().min(20, "Description must be at least 20 characters"),
+  title: z.string().min(5, "Le titre doit comporter au moins 5 caractères"),
+  description: z.string().min(20, "La description doit comporter au moins 20 caractères"),
   type: z.enum(["ROOM", "STUDIO", "APARTMENT", "COLIVING"]),
-  city: z.string().min(2, "City is required"),
-  neighborhood: z.string().min(2, "Neighborhood is required"),
-  address: z.string().min(5, "Address is required"),
-  price: z.number().min(0),
+  city: z.string().min(2, "La ville est requise"),
+  neighborhood: z.string().min(2, "Le quartier est requis"),
+  address: z.string().min(5, "L'adresse est requise"),
+  price: z.number().min(1, "Le loyer est requis"),
   size: z.number().optional(),
   bedrooms: z.number().optional(),
   bathrooms: z.number().optional(),
   isFurnished: z.boolean().default(true),
   amenities: z.array(z.string()).optional(),
   safetyFeatures: z.array(z.string()).optional(),
-  houseRules: z.any().optional(),
-  images: z.array(z.string()).min(1, "At least one image is required"),
+  houseRules: z.array(z.string()).optional(),
+  images: z.array(z.string()).min(1, "Au moins une image est requise"),
 });
 
 export async function createListing(data: z.infer<typeof listingSchema>) {
   try {
-    // In a real app, we'd get the session here
-    // const session = await auth();
-    // if (!session?.user) return { error: "Unauthorized" };
-    
-    // For now, let's assume we have a hostId (we can pass it or hardcode for testing)
-    // In production, we'd use session.user.id
-    
-    const validatedData = listingSchema.parse(data);
+    const session = await auth();
+    if (!session?.user) {
+      return { error: "Non autorisé. Veuillez vous connecter." };
+    }
 
-    // Mock hostId until auth is fully wired
-    const host = await prisma.user.findFirst({ where: { role: "HOST" } });
-    if (!host) return { error: "No host found to assign listing" };
+    const hostId = (session.user as any).id as string;
+    if (!hostId) {
+      return { error: "Session invalide. Veuillez vous reconnecter." };
+    }
+
+    const validatedData = listingSchema.parse(data);
 
     const listing = await prisma.listing.create({
       data: {
@@ -50,13 +49,13 @@ export async function createListing(data: z.infer<typeof listingSchema>) {
         bedrooms: validatedData.bedrooms,
         bathrooms: validatedData.bathrooms,
         isFurnished: validatedData.isFurnished,
-        amenities: validatedData.amenities,
-        safetyFeatures: validatedData.safetyFeatures,
-        houseRules: validatedData.houseRules,
-        hostId: host.id,
+        amenities: validatedData.amenities ?? [],
+        safetyFeatures: validatedData.safetyFeatures ?? [],
+        houseRules: validatedData.houseRules ?? [],
+        hostId,
         images: {
-          create: validatedData.images.map(url => ({ url }))
-        }
+          create: validatedData.images.map((url) => ({ url })),
+        },
       },
     });
 
@@ -64,8 +63,29 @@ export async function createListing(data: z.infer<typeof listingSchema>) {
   } catch (error) {
     console.error("Listing creation error:", error);
     if (error instanceof z.ZodError) {
-      return { error: error.errors[0].message };
+      return { error: error.issues[0].message };
     }
-    return { error: "Failed to create listing" };
+    return { error: "Impossible de créer l'annonce. Réessayez." };
+  }
+}
+
+export async function deleteListingById(listingId: string) {
+  try {
+    const session = await auth();
+    if (!session?.user) {
+      return { error: "Non autorisé." };
+    }
+
+    const hostId = (session.user as any).id as string;
+
+    // Confirm ownership before deleting
+    const listing = await prisma.listing.findUnique({ where: { id: listingId } });
+    if (!listing) return { error: "Annonce introuvable." };
+    if (listing.hostId !== hostId) return { error: "Vous n'êtes pas propriétaire de cette annonce." };
+
+    await prisma.listing.delete({ where: { id: listingId } });
+    return { success: true };
+  } catch {
+    return { error: "Impossible de supprimer l'annonce." };
   }
 }

@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+/* Design tokens — powers all text-accent, bg-primary, font-sans utilities */
+@theme {
+  --color-accent:      #B45309;   /* amber-700 */
+  --color-primary:     #0F172A;   /* slate-900 */
+  --color-background:  #ffffff;
+  --color-foreground:  #171717;
+  --color-muted:       #6B7280;   /* gray-500  */
+
+  --font-sans: var(--font-outfit);
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;

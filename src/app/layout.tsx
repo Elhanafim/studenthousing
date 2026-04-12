@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
+import SessionProvider from "@/components/providers/SessionProvider";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -8,8 +9,9 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Student Housing Morocco | Modern Student Living",
-  description: "The premium platform for student housing in Morocco. Find your perfect stay in Casablanca, Rabat, Marrakech, and more.",
+  title: "StudentHome.ma | Safe & Modern Housing for Moroccan Students",
+  description:
+    "The premium platform dedicated to connecting students with verified housing across major Moroccan university hubs — Casablanca, Rabat, Marrakech, and more.",
 };
 
 export default function RootLayout({
@@ -18,9 +20,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="fr">
       <body className={`${outfit.variable} font-sans antialiased bg-background text-foreground`}>
-        {children}
+        <SessionProvider>{children}</SessionProvider>
       </body>
     </html>
   );
