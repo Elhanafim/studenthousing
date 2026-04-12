@@ -2,9 +2,9 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 console.log("🌱 Starting database seed...");
-
-console.log("🌱 Starting database seed...");
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+  datasourceUrl: process.env.DATABASE_URL,
+});
 
 async function main() {
   const hashedPassword = await bcrypt.hash("password123", 12);
