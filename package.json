@@ -32,9 +32,11 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.3",
     "tailwindcss": "^4",
+    "tsx": "^4.19.0",
+    "dotenv": "^16.4.5",
     "typescript": "^5"
   },
   "prisma": {
-    "seed": "node --env-file=.env node_modules/.bin/tsx prisma/seed.ts"
+    "seed": "npx tsx --env-file=.env prisma/seed.ts"
   }
 }
