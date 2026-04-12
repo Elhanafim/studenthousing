@@ -272,8 +272,3 @@ export default function CreateListingWizard() {
     </div>
   );
 }
-        </AnimatePresence>
-      </div>
-    </div>
-  );
-}
