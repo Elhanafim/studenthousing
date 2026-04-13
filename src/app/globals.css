@@ -4,36 +4,37 @@
    Design tokens — consumed by Tailwind v4 utility generation
    ───────────────────────────────────────────────────────────────────────── */
 @theme {
-  /* Brand */
-  --color-brand:        #1A56DB;   /* blue-600 — primary interactive */
-  --color-brand-50:     #EBF5FF;
-  --color-brand-100:    #C3DDFD;
-  --color-brand-200:    #90B8F8;
-  --color-brand-500:    #2563EB;
-  --color-brand-600:    #1A56DB;
-  --color-brand-700:    #1648BF;
+  /* Brand — deep terracotta (Moroccan medina walls) */
+  --color-brand:        #B5451B;
+  --color-brand-50:     #FFF4EF;
+  --color-brand-100:    #FDDDD3;
+  --color-brand-200:    #FBBA9E;
+  --color-brand-500:    #D15F30;
+  --color-brand-600:    #B5451B;
+  --color-brand-700:    #8E3414;
 
-  /* Accent (success / availability) */
-  --color-accent:       #0E9F6E;   /* green-600 */
-  --color-accent-50:    #F3FAF7;
-  --color-accent-100:   #DEF7EC;
-  --color-accent-600:   #0E9F6E;
-  --color-accent-700:   #057A55;
+  /* Accent — warm saffron gold (Moroccan spice market) */
+  --color-accent:       #C47F17;
+  --color-accent-50:    #FFFBEB;
+  --color-accent-100:   #FEF0C4;
+  --color-accent-600:   #C47F17;
+  --color-accent-700:   #92580F;
 
   /* Neutrals */
-  --color-primary:      #111827;   /* gray-900 */
-  --color-secondary:    #374151;   /* gray-700 */
-  --color-muted:        #4B5563;   /* gray-600 — hard floor */
-  --color-surface:      #F9FAFB;   /* gray-50  */
+  --color-primary:      #1C1208;   /* warm near-black */
+  --color-secondary:    #3D2B1A;   /* warm dark brown */
+  --color-muted:        #6B5744;   /* warm mid-brown */
+  --color-surface:      #FAF8F5;   /* warm parchment */
   --color-background:   #ffffff;
-  --color-foreground:   #111827;
+  --color-foreground:   #1C1208;
 
   /* States */
-  --color-danger:       #E02424;
-  --color-warning:      #C27803;
+  --color-danger:       #DC2626;
+  --color-warning:      #B45309;
 
   /* Font */
-  --font-sans: var(--font-inter);
+  --font-sans:    var(--font-inter);
+  --font-display: var(--font-playfair);
 }
 
 /* ─── Base ──────────────────────────────────────────────────────────────── */
@@ -53,7 +54,7 @@ body {
 
 /* ─── Focus rings (accessibility) ──────────────────────────────────────── */
 :focus-visible {
-  outline: 2px solid #1A56DB;
+  outline: 2px solid #B5451B;
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -63,24 +64,38 @@ body {
   @apply bg-white/80 backdrop-blur-lg border border-white/30;
 }
 
-/* Brand gradient — blue (primary CTAs) */
+.font-display {
+  font-family: var(--font-display), Georgia, serif;
+}
+
+/* Brand gradient — terracotta (primary CTAs) */
 .brand-gradient {
-  background: linear-gradient(135deg, #1A56DB 0%, #1648BF 100%);
+  background: linear-gradient(135deg, #C4541F 0%, #8E3414 100%);
 }
 
-/* Clay gradient kept as alias for brand-gradient for backward compatibility */
+/* Clay gradient — alias */
 .clay-gradient {
-  background: linear-gradient(135deg, #1A56DB 0%, #1648BF 100%);
+  background: linear-gradient(135deg, #C4541F 0%, #8E3414 100%);
 }
 
-/* Dark premium gradient */
+/* Dark premium gradient — warm charcoal */
 .premium-gradient {
-  background: linear-gradient(135deg, #111827 0%, #1F2937 100%);
+  background: linear-gradient(135deg, #1C1208 0%, #2D1F0F 100%);
 }
 
-/* Success gradient */
+/* Success gradient — warm teal */
 .success-gradient {
-  background: linear-gradient(135deg, #0E9F6E 0%, #057A55 100%);
+  background: linear-gradient(135deg, #0D7377 0%, #085457 100%);
+}
+
+/* Hero overlay — lets the photo breathe */
+.hero-overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(28, 18, 8, 0.52) 0%,
+    rgba(28, 18, 8, 0.30) 45%,
+    rgba(28, 18, 8, 0.60) 100%
+  );
 }
 
 /* ─── Skeleton animation ────────────────────────────────────────────────── */
@@ -89,7 +104,7 @@ body {
   100% { background-position:  200% 0; }
 }
 .skeleton {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background: linear-gradient(90deg, #f5f0eb 25%, #ede5dc 50%, #f5f0eb 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 8px;

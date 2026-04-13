@@ -58,30 +58,30 @@ export default function HomeClient({ listings }: { listings: any[] }) {
       {/* ══════════════════════════════════════════════
           HERO
       ══════════════════════════════════════════════ */}
-      <section className="relative border-b border-gray-100 py-20 md:py-28 overflow-hidden">
+      <section className="relative border-b border-brand-700/20 py-32 md:py-44 overflow-hidden">
         <Image
           src="/hero.jpg"
           alt="Maroc"
           fill
-          className="object-cover"
+          className="object-cover object-center"
           priority
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-white/80" />
+        <div className="hero-overlay absolute inset-0" />
         <div className="relative max-w-4xl mx-auto px-4 text-center">
 
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 bg-accent-100 text-accent-700 px-4 py-1.5 rounded-full text-xs font-semibold mb-6 border border-accent-100">
-            <Gift className="w-3.5 h-3.5" />
+          <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm text-white px-4 py-1.5 rounded-full text-xs font-semibold mb-7 border border-white/25 shadow-sm">
+            <Gift className="w-3.5 h-3.5 text-accent-100" />
             100% Gratuit — aucun frais, aucune commission
           </div>
 
           {/* Headline */}
-          <h1 className="text-4xl md:text-6xl font-semibold text-gray-900 tracking-tight leading-[1.1] mb-5">
+          <h1 className="font-display text-5xl md:text-7xl font-bold text-white tracking-tight leading-[1.08] mb-5 drop-shadow-sm">
             Trouvez votre logement<br />
-            <span className="text-brand-600">étudiant au Maroc.</span>
+            <span className="text-accent-100 italic">étudiant au Maroc.</span>
           </h1>
-          <p className="text-lg text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg text-white/75 mb-10 max-w-2xl mx-auto leading-relaxed font-light">
             Annonces vérifiées, gratuites, et pensées pour les étudiants.
             Casablanca, Rabat, Fès, Marrakech et plus encore.
           </p>
@@ -89,12 +89,12 @@ export default function HomeClient({ listings }: { listings: any[] }) {
           {/* Search bar */}
           <form
             onSubmit={handleSearch}
-            className="bg-white rounded-2xl border border-gray-200 shadow-lg p-2 max-w-3xl mx-auto flex flex-col sm:flex-row gap-2"
+            className="bg-white rounded-2xl border border-white/60 shadow-2xl p-2 max-w-3xl mx-auto flex flex-col sm:flex-row gap-2"
             role="search"
             aria-label="Recherche de logement"
           >
             <div className="flex items-center gap-2 flex-1 px-3 border-b sm:border-b-0 sm:border-r border-gray-100 py-1.5">
-              <MapPin className="w-4 h-4 text-gray-400 shrink-0" aria-hidden="true" />
+              <MapPin className="w-4 h-4 text-brand-400 shrink-0" aria-hidden="true" />
               <select
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
@@ -109,7 +109,7 @@ export default function HomeClient({ listings }: { listings: any[] }) {
             </div>
 
             <div className="flex items-center gap-2 flex-1 px-3 border-b sm:border-b-0 sm:border-r border-gray-100 py-1.5">
-              <Building2 className="w-4 h-4 text-gray-400 shrink-0" aria-hidden="true" />
+              <Building2 className="w-4 h-4 text-brand-400 shrink-0" aria-hidden="true" />
               <select
                 value={type}
                 onChange={(e) => setType(e.target.value)}
@@ -123,7 +123,7 @@ export default function HomeClient({ listings }: { listings: any[] }) {
             </div>
 
             <div className="flex items-center gap-2 flex-1 px-3 py-1.5">
-              <Search className="w-4 h-4 text-gray-400 shrink-0" aria-hidden="true" />
+              <Search className="w-4 h-4 text-brand-400 shrink-0" aria-hidden="true" />
               <input
                 type="text"
                 value={query}
@@ -136,7 +136,7 @@ export default function HomeClient({ listings }: { listings: any[] }) {
 
             <button
               type="submit"
-              className="brand-gradient text-white px-6 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 hover:shadow-md transition-shadow shrink-0"
+              className="brand-gradient text-white px-6 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 hover:shadow-lg transition-shadow shrink-0"
             >
               <Search className="w-4 h-4" aria-hidden="true" />
               Rechercher
@@ -144,14 +144,14 @@ export default function HomeClient({ listings }: { listings: any[] }) {
           </form>
 
           {/* Trust row */}
-          <div className="flex flex-wrap items-center justify-center gap-6 mt-8 text-sm text-gray-600">
+          <div className="flex flex-wrap items-center justify-center gap-6 mt-8 text-sm text-white/70">
             {[
               { icon: ShieldCheck, label: "Annonces vérifiées" },
               { icon: Gift,        label: "100% gratuit" },
               { icon: UserCheck,   label: "Hôtes identifiés" },
             ].map(({ icon: Icon, label }) => (
               <div key={label} className="flex items-center gap-1.5">
-                <Icon className="w-4 h-4 text-accent-600" aria-hidden="true" />
+                <Icon className="w-4 h-4 text-accent-100" aria-hidden="true" />
                 <span>{label}</span>
               </div>
             ))}
@@ -171,8 +171,8 @@ export default function HomeClient({ listings }: { listings: any[] }) {
               <div className="w-12 h-12 bg-brand-50 rounded-xl flex items-center justify-center mb-5">
                 <Search className="w-6 h-6 text-brand-600" aria-hidden="true" />
               </div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">Je cherche un logement</h2>
-              <p className="text-gray-600 text-sm mb-5">Étudiants à la recherche d'un appartement, studio ou colocation.</p>
+              <h2 className="font-display text-xl font-bold text-primary mb-2">Je cherche un logement</h2>
+              <p className="text-muted text-sm mb-5">Étudiants à la recherche d'un appartement, studio ou colocation.</p>
               <ul className="space-y-2.5 mb-6">
                 {[
                   "Annonces vérifiées par notre équipe",
@@ -199,7 +199,7 @@ export default function HomeClient({ listings }: { listings: any[] }) {
                 <Home className="w-6 h-6 text-accent-600" aria-hidden="true" />
               </div>
               <div className="flex items-center gap-2 mb-2">
-                <h2 className="text-xl font-semibold text-gray-900">Je suis étudiant-hôte</h2>
+                <h2 className="font-display text-xl font-bold text-primary">Je suis étudiant-hôte</h2>
                 <span className="text-[10px] font-bold bg-accent-100 text-accent-700 px-2 py-0.5 rounded-full uppercase tracking-wider">Gratuit</span>
               </div>
               <p className="text-gray-600 text-sm mb-5">Sous-louer, partager, ou céder ma chambre à un autre étudiant.</p>
@@ -234,8 +234,8 @@ export default function HomeClient({ listings }: { listings: any[] }) {
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex items-end justify-between mb-10">
               <div>
-                <h2 className="text-2xl font-semibold text-gray-900 mb-1">Logements récents</h2>
-                <p className="text-gray-600 text-sm">Annonces vérifiées dans les villes universitaires.</p>
+                <h2 className="font-display text-3xl font-bold text-primary mb-1">Logements récents</h2>
+                <p className="text-muted text-sm">Annonces vérifiées dans les villes universitaires.</p>
               </div>
               <Link href="/search" className="text-sm font-medium text-brand-600 hover:underline flex items-center gap-1">
                 Tout voir <ArrowRight className="w-4 h-4" />
@@ -293,11 +293,11 @@ export default function HomeClient({ listings }: { listings: any[] }) {
       {/* ══════════════════════════════════════════════
           POPULAR CITIES
       ══════════════════════════════════════════════ */}
-      <section className="py-16 bg-surface border-t border-gray-100">
+      <section className="py-16 bg-surface border-t border-brand-100/40">
         <div className="max-w-7xl mx-auto px-4">
           <div className="mb-10">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-1">Villes universitaires populaires</h2>
-            <p className="text-gray-600 text-sm">Des logements vérifiés dans les principaux pôles universitaires.</p>
+            <h2 className="font-display text-3xl font-bold text-primary mb-1">Villes universitaires populaires</h2>
+            <p className="text-muted text-sm">Des logements vérifiés dans les principaux pôles universitaires.</p>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -332,8 +332,8 @@ export default function HomeClient({ listings }: { listings: any[] }) {
       <section className="py-16 bg-white border-t border-gray-100">
         <div className="max-w-5xl mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-2">Comment ça marche ?</h2>
-            <p className="text-gray-600 text-sm">Du premier clic à l'emménagement en 4 étapes.</p>
+            <h2 className="font-display text-3xl font-bold text-primary mb-2">Comment ça marche ?</h2>
+            <p className="text-muted text-sm">Du premier clic à l'emménagement en 4 étapes.</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
@@ -365,7 +365,7 @@ export default function HomeClient({ listings }: { listings: any[] }) {
             <div className="w-14 h-14 bg-white/10 rounded-xl flex items-center justify-center mx-auto mb-6">
               <ShieldCheck className="text-white w-7 h-7" aria-hidden="true" />
             </div>
-            <h2 className="text-2xl md:text-3xl font-semibold text-white mb-3">
+            <h2 className="font-display text-2xl md:text-4xl font-bold text-white mb-3">
               Votre sécurité, notre priorité.
             </h2>
             <p className="text-blue-100 text-sm mb-8 max-w-lg mx-auto leading-relaxed">
