@@ -1,4 +1,3 @@
-import Navbar from "@/components/shared/Navbar";
 import Link from "next/link";
 import {
   ShieldCheck,
@@ -78,7 +77,6 @@ const TIPS = [
 export default function GuaranteesPage() {
   return (
     <div className="min-h-screen bg-[#FAFBFE]">
-      <Navbar />
 
       {/* Hero */}
       <section className="bg-primary py-20 text-center relative overflow-hidden">

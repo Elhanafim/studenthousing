@@ -1,7 +1,6 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import Navbar from "@/components/shared/Navbar";
 import MessageThread from "@/components/messages/MessageThread";
 import { MessageSquare } from "lucide-react";
 import Link from "next/link";
@@ -86,7 +85,6 @@ export default async function MessagesPage({
 
   return (
     <div className="min-h-screen bg-[#FAFBFE]">
-      <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-6">

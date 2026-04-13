@@ -3,11 +3,13 @@
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { auth } from "@/lib/auth";
+import { revalidatePath } from "next/cache";
 
 const listingSchema = z.object({
   title: z.string().min(5, "Le titre doit comporter au moins 5 caractères"),
   description: z.string().min(20, "La description doit comporter au moins 20 caractères"),
   type: z.enum(["ROOM", "STUDIO", "APARTMENT", "COLIVING", "HOMESTAY"]),
+  listingType: z.enum(["COLOC", "SUBLEASE", "CESSION", "STANDARD"]).default("STANDARD"),
   city: z.string().min(2, "La ville est requise"),
   neighborhood: z.string().min(2, "Le quartier est requis"),
   address: z.string().min(5, "L'adresse est requise"),
@@ -16,11 +18,14 @@ const listingSchema = z.object({
   bedrooms: z.number().optional(),
   bathrooms: z.number().optional(),
   isFurnished: z.boolean().default(true),
+  isStudentHost: z.boolean().default(false),
   amenities: z.array(z.string()).optional(),
   safetyFeatures: z.array(z.string()).optional(),
   houseRules: z.array(z.string()).optional(),
   images: z.array(z.string()).min(1, "Au moins une image est requise"),
+  videos: z.array(z.string()).optional(),
   availableFrom: z.string().optional(),
+  availableTo: z.string().optional(),
   minDuration: z.number().min(1).default(1),
 });
 
@@ -39,6 +44,7 @@ export async function createListing(data: z.infer<typeof listingSchema>) {
         title: validatedData.title,
         description: validatedData.description,
         type: validatedData.type,
+        listingType: validatedData.listingType,
         city: validatedData.city,
         neighborhood: validatedData.neighborhood,
         address: validatedData.address,
@@ -47,16 +53,23 @@ export async function createListing(data: z.infer<typeof listingSchema>) {
         bedrooms: validatedData.bedrooms,
         bathrooms: validatedData.bathrooms,
         isFurnished: validatedData.isFurnished,
+        isStudentHost: validatedData.isStudentHost,
         amenities: validatedData.amenities ?? [],
         safetyFeatures: validatedData.safetyFeatures ?? [],
         houseRules: validatedData.houseRules ?? [],
         availableFrom: validatedData.availableFrom ? new Date(validatedData.availableFrom) : null,
+        availableTo: validatedData.availableTo ? new Date(validatedData.availableTo) : null,
         minDuration: validatedData.minDuration,
         hostId,
-        images: { create: validatedData.images.map((url) => ({ url })) },
+        images: { create: validatedData.images.map((url, i) => ({ url, order: i })) },
+        videos: validatedData.videos?.length
+          ? { create: validatedData.videos.map((url) => ({ url })) }
+          : undefined,
       },
     });
 
+    revalidatePath("/");
+    revalidatePath("/search");
     return { success: true, listingId: listing.id };
   } catch (error) {
     console.error("Listing creation error:", error);
@@ -76,6 +89,7 @@ export async function deleteListingById(listingId: string) {
     if (listing.hostId !== hostId) return { error: "Vous n'êtes pas propriétaire de cette annonce." };
 
     await prisma.listing.delete({ where: { id: listingId } });
+    revalidatePath("/dashboard");
     return { success: true };
   } catch {
     return { error: "Impossible de supprimer l'annonce." };

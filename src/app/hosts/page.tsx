@@ -1,4 +1,3 @@
-import Navbar from "@/components/shared/Navbar";
 import Link from "next/link";
 import { ShieldCheck, TrendingUp, Users, Star, CheckCircle, Building, MessageSquare, BarChart3 } from "lucide-react";
 
@@ -31,7 +30,6 @@ const FAQS = [
 export default function HostsPage() {
   return (
     <div className="min-h-screen bg-[#FAFBFE]">
-      <Navbar />
 
       {/* Hero */}
       <section className="relative bg-primary overflow-hidden">

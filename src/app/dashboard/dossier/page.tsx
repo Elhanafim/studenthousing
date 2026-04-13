@@ -1,7 +1,6 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import Navbar from "@/components/shared/Navbar";
 import DossierForm from "@/components/dashboard/DossierForm";
 import { getDossierCompletionPercent } from "@/lib/utils/dossier";
 import { FileText, ShieldCheck } from "lucide-react";
@@ -37,7 +36,6 @@ export default async function DossierPage() {
 
   return (
     <div className="min-h-screen bg-[#FAFBFE]">
-      <Navbar />
 
       <div className="max-w-4xl mx-auto px-4 py-12">
         {/* Header */}

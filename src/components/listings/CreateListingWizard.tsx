@@ -87,6 +87,9 @@ export default function CreateListingWizard() {
     setError("");
     const payload = {
       ...formData,
+      listingType: "STANDARD" as const,
+      isStudentHost: false,
+      images: formData.images,
       availableFrom: formData.availableFrom || undefined,
     };
     const res = await createListing(payload);

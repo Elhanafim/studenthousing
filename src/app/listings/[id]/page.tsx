@@ -1,7 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import ListingDetailClient from "@/components/listings/ListingDetailClient";
-import Navbar from "@/components/shared/Navbar";
 import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
@@ -40,7 +39,6 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
 
   return (
     <>
-      <Navbar />
       <ListingDetailClient
         listing={listing}
         currentUser={currentUser}

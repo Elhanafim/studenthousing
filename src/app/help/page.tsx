@@ -1,4 +1,3 @@
-import Navbar from "@/components/shared/Navbar";
 import Link from "next/link";
 import { HelpCircle, MessageSquare, Phone, Mail, ChevronDown, BookOpen, Shield, Home, FileText, CreditCard, AlertCircle } from "lucide-react";
 
@@ -50,7 +49,6 @@ const CATEGORIES = [
 export default function HelpPage() {
   return (
     <div className="min-h-screen bg-[#FAFBFE]">
-      <Navbar />
 
       {/* Hero */}
       <section className="bg-white border-b border-gray-100 py-16">

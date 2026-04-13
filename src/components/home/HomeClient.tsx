@@ -1,20 +1,35 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
-import { Search, MapPin, Building, Shield, Star, ArrowRight, UserCheck, Heart, MessageSquare, Users, ShieldCheck, Clock, FileCheck } from "lucide-react";
-import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import {
+  Search,
+  MapPin,
+  Building2,
+  ShieldCheck,
+  CheckCircle,
+  ArrowRight,
+  Star,
+  FileText,
+  MessageSquare,
+  UserCheck,
+  Home,
+  Users,
+  Clock,
+  BadgeCheck,
+  Gift,
+} from "lucide-react";
 import { MOROCCO_CITIES, POPULAR_STUDENT_CITIES } from "@/lib/moroccoCities";
 
 const TYPES = [
-  { value: "", label: "Tous" },
-  { value: "ROOM", label: "Chambre" },
-  { value: "STUDIO", label: "Studio" },
-  { value: "APARTMENT", label: "Appartement" },
-  { value: "COLIVING", label: "Coliving" },
-  { value: "HOMESTAY", label: "Chez l'habitant" },
+  { value: "",           label: "Tous les types" },
+  { value: "ROOM",       label: "Chambre" },
+  { value: "STUDIO",     label: "Studio" },
+  { value: "APARTMENT",  label: "Appartement" },
+  { value: "COLIVING",   label: "Coliving" },
+  { value: "HOMESTAY",   label: "Chez l'habitant" },
 ];
 
 const TYPE_LABELS: Record<string, string> = {
@@ -28,7 +43,8 @@ export default function HomeClient({ listings }: { listings: any[] }) {
   const [type, setType] = useState("");
   const [query, setQuery] = useState("");
 
-  function handleSearch() {
+  function handleSearch(e?: React.FormEvent) {
+    e?.preventDefault();
     const params = new URLSearchParams();
     if (city) params.set("city", city);
     if (type) params.set("type", type);
@@ -37,61 +53,44 @@ export default function HomeClient({ listings }: { listings: any[] }) {
   }
 
   return (
-    <main className="min-h-screen">
-      {/* ── Hero ─────────────────────────────────── */}
-      <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=2070"
-            alt="Rabat, Maroc"
-            fill
-            className="object-cover"
-            priority
-          />
-          <div className="absolute inset-0 bg-primary/65" />
-        </div>
+    <div className="min-h-screen bg-surface">
 
-        <div className="relative z-10 w-full max-w-5xl mx-auto px-4 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full text-white text-xs font-bold mb-8 border border-white/20"
-          >
-            <UserCheck className="w-4 h-4 text-accent" />
-            LA PLATEFORME DE LOGEMENT ÉTUDIANT AU MAROC
-          </motion.div>
+      {/* ══════════════════════════════════════════════
+          HERO
+      ══════════════════════════════════════════════ */}
+      <section className="bg-white border-b border-gray-100 py-20 md:py-28">
+        <div className="max-w-4xl mx-auto px-4 text-center">
 
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-7xl font-black text-white mb-6 tracking-tight leading-[1.1]"
-          >
-            Trouvez votre logement
-            <span className="block text-accent">étudiant idéal.</span>
-          </motion.h1>
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 bg-accent-100 text-accent-700 px-4 py-1.5 rounded-full text-xs font-semibold mb-6 border border-accent-100">
+            <Gift className="w-3.5 h-3.5" />
+            100% Gratuit — aucun frais, aucune commission
+          </div>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-lg text-gray-200 mb-10 max-w-2xl mx-auto font-light leading-relaxed"
-          >
-            Annonces vérifiées, hôtes de confiance, dossier en ligne — tout ce qu'il vous faut pour louer sereinement dans les grandes villes universitaires marocaines.
-          </motion.p>
+          {/* Headline */}
+          <h1 className="text-4xl md:text-6xl font-semibold text-gray-900 tracking-tight leading-[1.1] mb-5">
+            Trouvez votre logement<br />
+            <span className="text-brand-600">étudiant au Maroc.</span>
+          </h1>
+          <p className="text-lg text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+            Annonces vérifiées, gratuites, et pensées pour les étudiants.
+            Casablanca, Rabat, Fès, Marrakech et plus encore.
+          </p>
 
           {/* Search bar */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.97 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2 }}
-            className="bg-white rounded-2xl md:rounded-full p-2 max-w-4xl mx-auto shadow-2xl flex flex-col md:flex-row gap-2"
+          <form
+            onSubmit={handleSearch}
+            className="bg-white rounded-2xl border border-gray-200 shadow-lg p-2 max-w-3xl mx-auto flex flex-col sm:flex-row gap-2"
+            role="search"
+            aria-label="Recherche de logement"
           >
-            <div className="flex-1 flex items-center px-5 gap-3 border-b md:border-b-0 md:border-r border-gray-100 py-2">
-              <MapPin className="text-accent w-5 h-5 shrink-0" />
+            <div className="flex items-center gap-2 flex-1 px-3 border-b sm:border-b-0 sm:border-r border-gray-100 py-1.5">
+              <MapPin className="w-4 h-4 text-gray-400 shrink-0" aria-hidden="true" />
               <select
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
-                className="bg-transparent border-none focus:outline-none w-full text-sm font-medium text-gray-700"
+                className="bg-transparent w-full text-sm text-gray-700 focus:outline-none"
+                aria-label="Ville"
               >
                 <option value="">Toutes les villes</option>
                 {MOROCCO_CITIES.map((c) => (
@@ -100,12 +99,13 @@ export default function HomeClient({ listings }: { listings: any[] }) {
               </select>
             </div>
 
-            <div className="flex-1 flex items-center px-5 gap-3 border-b md:border-b-0 md:border-r border-gray-100 py-2">
-              <Building className="text-accent w-5 h-5 shrink-0" />
+            <div className="flex items-center gap-2 flex-1 px-3 border-b sm:border-b-0 sm:border-r border-gray-100 py-1.5">
+              <Building2 className="w-4 h-4 text-gray-400 shrink-0" aria-hidden="true" />
               <select
                 value={type}
                 onChange={(e) => setType(e.target.value)}
-                className="bg-transparent border-none focus:outline-none w-full text-sm font-medium text-gray-700"
+                className="bg-transparent w-full text-sm text-gray-700 focus:outline-none"
+                aria-label="Type de logement"
               >
                 {TYPES.map((t) => (
                   <option key={t.value} value={t.value}>{t.label}</option>
@@ -113,258 +113,281 @@ export default function HomeClient({ listings }: { listings: any[] }) {
               </select>
             </div>
 
-            <div className="flex-1 flex items-center px-5 gap-3 py-2">
-              <Search className="text-gray-400 w-5 h-5 shrink-0" />
+            <div className="flex items-center gap-2 flex-1 px-3 py-1.5">
+              <Search className="w-4 h-4 text-gray-400 shrink-0" aria-hidden="true" />
               <input
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                placeholder="Université, quartier, mot-clé…"
-                className="bg-transparent border-none focus:outline-none w-full text-sm font-medium placeholder-gray-400"
+                placeholder="Quartier, université…"
+                className="bg-transparent w-full text-sm text-gray-700 placeholder-gray-400 focus:outline-none"
+                aria-label="Mot-clé"
               />
             </div>
 
             <button
-              onClick={handleSearch}
-              className="clay-gradient text-white px-10 py-4 rounded-xl md:rounded-full font-black flex items-center justify-center gap-2 hover:shadow-xl transition-all whitespace-nowrap"
+              type="submit"
+              className="brand-gradient text-white px-6 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 hover:shadow-md transition-shadow shrink-0"
             >
-              <Search className="w-4 h-4" /> Rechercher
+              <Search className="w-4 h-4" aria-hidden="true" />
+              Rechercher
             </button>
-          </motion.div>
+          </form>
 
-          {/* Quick type chips */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.35 }}
-            className="flex flex-wrap justify-center gap-2 mt-6"
-          >
-            {TYPES.slice(1).map((t) => (
-              <button
-                key={t.value}
-                onClick={() => { setType(t.value); router.push(`/search?type=${t.value}`); }}
-                className="bg-white/10 border border-white/20 text-white text-xs font-bold px-4 py-2 rounded-full hover:bg-white/20 transition-all backdrop-blur-sm"
-              >
-                {t.label}
-              </button>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ── Trust strip ─────────────────────────── */}
-      <section className="bg-white border-b border-gray-100 py-5">
-        <div className="max-w-5xl mx-auto px-4 flex flex-wrap justify-center gap-8">
-          {[
-            { icon: <ShieldCheck className="w-4 h-4 text-green-500" />, label: "Annonces vérifiées manuellement" },
-            { icon: <FileCheck className="w-4 h-4 text-blue-500" />, label: "Dossier en ligne sécurisé" },
-            { icon: <Clock className="w-4 h-4 text-amber-500" />, label: "Réponse sous 48h garantie" },
-            { icon: <UserCheck className="w-4 h-4 text-accent" />, label: "Hôtes identifiés et vérifiés" },
-          ].map((item) => (
-            <div key={item.label} className="flex items-center gap-2 text-sm font-medium text-gray-600">
-              {item.icon}
-              {item.label}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── Featured listings ────────────────────── */}
-      <section className="py-24 bg-[#FAFBFE]">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-between items-end mb-12">
-            <div>
-              <h2 className="text-4xl font-black mb-2 tracking-tight">Logements sélectionnés</h2>
-              <p className="text-gray-500 font-light">Qualité et sécurité vérifiées dans les quartiers étudiants.</p>
-            </div>
-            <Link href="/search" className="text-accent font-bold flex items-center gap-2 group transition-all whitespace-nowrap">
-              Tout explorer <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {listings.map((res) => (
-              <Link
-                key={res.id}
-                href={`/listings/${res.id}`}
-                className="bg-white rounded-[2.5rem] overflow-hidden group shadow-sm hover:shadow-2xl transition-all border border-gray-100"
-              >
-                <div className="relative h-64 overflow-hidden">
-                  <Image
-                    src={res.images[0]?.url || "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=2070"}
-                    alt={res.title}
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-                  <div className="absolute top-5 left-5 glass px-3 py-1.5 rounded-full text-[10px] font-black flex items-center gap-1.5 text-primary border border-white/40">
-                    <Star className="w-3 h-3 text-accent fill-accent" /> 4.8
-                  </div>
-                  {res.isVerified && (
-                    <div className="absolute top-5 right-5 bg-green-500 text-white px-2.5 py-1 rounded-full flex items-center gap-1 text-[10px] font-black">
-                      <ShieldCheck className="w-3 h-3" /> Vérifié
-                    </div>
-                  )}
-                </div>
-                <div className="p-7">
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="min-w-0">
-                      <h3 className="text-xl font-black mb-1 truncate">{res.title}</h3>
-                      <div className="flex items-center gap-1 text-gray-400 text-sm">
-                        <MapPin className="w-3 h-3" />
-                        {res.neighborhood || ""}{res.neighborhood ? ", " : ""}{res.city}
-                      </div>
-                    </div>
-                    <div className="text-right ml-4 shrink-0">
-                      <div className="text-accent font-black text-xl">{res.price.toLocaleString()} MAD</div>
-                      <div className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">/ mois</div>
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5 mb-5">
-                    <span className="text-[10px] bg-accent/10 text-accent px-3 py-1 rounded-full font-bold uppercase tracking-wider">
-                      {TYPE_LABELS[res.type] ?? res.type}
-                    </span>
-                    {(res.amenities as string[] | null)?.slice(0, 2).map((f: string) => (
-                      <span key={f} className="text-[10px] bg-gray-50 text-gray-400 px-3 py-1 rounded-full uppercase tracking-wider font-bold">{f}</span>
-                    ))}
-                  </div>
-                  <div className="w-full py-4 rounded-2xl border-2 border-primary text-primary font-black group-hover:bg-primary group-hover:text-white transition-all text-center text-sm uppercase tracking-wider">
-                    Voir le logement
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Popular cities ───────────────────────── */}
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="mb-12">
-            <h2 className="text-4xl font-black mb-2 tracking-tight">Villes étudiantes populaires</h2>
-            <p className="text-gray-500 font-light">Des logements vérifiés dans les principaux pôles universitaires du Maroc.</p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
-            {POPULAR_STUDENT_CITIES.map(({ city, image, universities }) => (
-              <Link
-                key={city}
-                href={`/search?city=${encodeURIComponent(city)}`}
-                className="group relative rounded-[2rem] overflow-hidden h-48 block"
-              >
-                <Image src={image} alt={city} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
-                <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/30 to-transparent" />
-                <div className="absolute bottom-5 left-5 right-5">
-                  <h3 className="text-white font-black text-xl">{city}</h3>
-                  <p className="text-white/70 text-xs font-medium mt-1 truncate">
-                    {universities.slice(0, 2).join(", ")}
-                  </p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── How it works ─────────────────────────── */}
-      <section className="py-24 bg-[#FAFBFE]">
-        <div className="max-w-5xl mx-auto px-4 text-center">
-          <h2 className="text-4xl font-black mb-4 tracking-tight">Comment ça marche ?</h2>
-          <p className="text-gray-500 font-light mb-16 max-w-xl mx-auto">Du premier clic à l'emménagement, nous vous accompagnons à chaque étape.</p>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          {/* Trust row */}
+          <div className="flex flex-wrap items-center justify-center gap-6 mt-8 text-sm text-gray-600">
             {[
-              { step: "01", icon: <Search className="w-6 h-6" />, title: "Cherchez", desc: "Filtrez par ville, type et budget parmi des annonces vérifiées." },
-              { step: "02", icon: <FileCheck className="w-6 h-6" />, title: "Créez votre dossier", desc: "Remplissez votre dossier de location en ligne une seule fois." },
-              { step: "03", icon: <MessageSquare className="w-6 h-6" />, title: "Contactez l'hôte", desc: "Envoyez une demande et échangez directement avec le propriétaire." },
-              { step: "04", icon: <ShieldCheck className="w-6 h-6" />, title: "Emménagez !", desc: "Signez votre bail et emménagez en toute sérénité." },
-            ].map((item) => (
-              <div key={item.step} className="text-center">
-                <div className="w-14 h-14 clay-gradient rounded-2xl flex items-center justify-center text-white mx-auto mb-4 shadow-lg">
-                  {item.icon}
-                </div>
-                <div className="text-[10px] font-black text-accent uppercase tracking-widest mb-1">{item.step}</div>
-                <h3 className="font-black text-primary text-lg mb-2">{item.title}</h3>
-                <p className="text-gray-400 font-light text-sm leading-relaxed">{item.desc}</p>
+              { icon: ShieldCheck, label: "Annonces vérifiées" },
+              { icon: Gift,        label: "100% gratuit" },
+              { icon: UserCheck,   label: "Hôtes identifiés" },
+            ].map(({ icon: Icon, label }) => (
+              <div key={label} className="flex items-center gap-1.5">
+                <Icon className="w-4 h-4 text-accent-600" aria-hidden="true" />
+                <span>{label}</span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── Trust & Safety banner ────────────────── */}
-      <section className="py-16 px-4">
-        <div className="max-w-7xl mx-auto clay-gradient rounded-[3rem] p-10 md:p-20 flex flex-col md:flex-row items-center gap-12 relative overflow-hidden shadow-2xl">
-          <div className="relative z-10 text-center md:text-left flex-1">
-            <div className="w-14 h-14 bg-white/10 backdrop-blur-lg rounded-2xl flex items-center justify-center mb-6">
-              <Shield className="text-white w-8 h-8" />
+      {/* ══════════════════════════════════════════════
+          DUAL ROLE VALUE PROPOSITION
+      ══════════════════════════════════════════════ */}
+      <section className="py-16 bg-surface">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            {/* Seeker */}
+            <div className="bg-white rounded-2xl ring-1 ring-gray-200 p-8 hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 bg-brand-50 rounded-xl flex items-center justify-center mb-5">
+                <Search className="w-6 h-6 text-brand-600" aria-hidden="true" />
+              </div>
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">Je cherche un logement</h2>
+              <p className="text-gray-600 text-sm mb-5">Étudiants à la recherche d'un appartement, studio ou colocation.</p>
+              <ul className="space-y-2.5 mb-6">
+                {[
+                  "Annonces vérifiées par notre équipe",
+                  "Dossier de location en ligne, une seule fois",
+                  "Messagerie directe avec le propriétaire",
+                ].map((b) => (
+                  <li key={b} className="flex items-start gap-2.5 text-sm text-gray-700">
+                    <CheckCircle className="w-4 h-4 text-accent-600 mt-0.5 shrink-0" aria-hidden="true" />
+                    {b}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/search"
+                className="inline-flex items-center gap-2 px-5 py-2.5 brand-gradient text-white text-sm font-semibold rounded-xl hover:shadow-md transition-shadow"
+              >
+                Rechercher un logement <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
-            <h2 className="text-4xl md:text-5xl font-black text-white mb-4 leading-tight">
-              Votre sécurité,<br />notre priorité.
+
+            {/* Host */}
+            <div className="bg-white rounded-2xl ring-1 ring-gray-200 p-8 hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 bg-accent-50 rounded-xl flex items-center justify-center mb-5">
+                <Home className="w-6 h-6 text-accent-600" aria-hidden="true" />
+              </div>
+              <div className="flex items-center gap-2 mb-2">
+                <h2 className="text-xl font-semibold text-gray-900">Je suis étudiant-hôte</h2>
+                <span className="text-[10px] font-bold bg-accent-100 text-accent-700 px-2 py-0.5 rounded-full uppercase tracking-wider">Gratuit</span>
+              </div>
+              <p className="text-gray-600 text-sm mb-5">Sous-louer, partager, ou céder ma chambre à un autre étudiant.</p>
+              <ul className="space-y-2.5 mb-6">
+                {[
+                  "Publication gratuite, 0% de commission",
+                  "3 scénarios : colocation, sous-location, cession",
+                  "Système de visite intégré avec réservation en ligne",
+                ].map((b) => (
+                  <li key={b} className="flex items-start gap-2.5 text-sm text-gray-700">
+                    <CheckCircle className="w-4 h-4 text-accent-600 mt-0.5 shrink-0" aria-hidden="true" />
+                    {b}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/publish"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent-600 text-white text-sm font-semibold rounded-xl hover:bg-accent-700 transition-colors hover:shadow-md"
+              >
+                Publier une annonce <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════
+          FEATURED LISTINGS
+      ══════════════════════════════════════════════ */}
+      {listings.length > 0 && (
+        <section className="py-16 bg-white border-t border-gray-100">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="flex items-end justify-between mb-10">
+              <div>
+                <h2 className="text-2xl font-semibold text-gray-900 mb-1">Logements récents</h2>
+                <p className="text-gray-600 text-sm">Annonces vérifiées dans les villes universitaires.</p>
+              </div>
+              <Link href="/search" className="text-sm font-medium text-brand-600 hover:underline flex items-center gap-1">
+                Tout voir <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {listings.map((listing) => (
+                <Link
+                  key={listing.id}
+                  href={`/listings/${listing.id}`}
+                  className="group bg-white rounded-2xl ring-1 ring-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
+                >
+                  <div className="relative h-52 overflow-hidden bg-gray-100">
+                    <Image
+                      src={listing.images[0]?.url || "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=800"}
+                      alt={listing.title}
+                      fill
+                      className="object-cover group-hover:scale-[1.02] transition-transform duration-300"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    />
+                    {listing.isVerified && (
+                      <span className="absolute top-3 right-3 flex items-center gap-1 bg-white/90 backdrop-blur-sm text-accent-600 px-2 py-1 rounded-lg text-[11px] font-semibold border border-accent-100">
+                        <BadgeCheck className="w-3.5 h-3.5" aria-hidden="true" /> Vérifié
+                      </span>
+                    )}
+                    <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-gray-700 px-2 py-1 rounded-lg text-[11px] font-medium">
+                      {TYPE_LABELS[listing.type] ?? listing.type}
+                    </span>
+                  </div>
+                  <div className="p-5">
+                    <h3 className="font-semibold text-gray-900 truncate mb-1">{listing.title}</h3>
+                    <div className="flex items-center gap-1 text-gray-500 text-sm mb-3">
+                      <MapPin className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                      <span className="truncate">{listing.neighborhood ? `${listing.neighborhood}, ` : ""}{listing.city}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <span className="text-lg font-semibold text-gray-900">{listing.price.toLocaleString()} MAD</span>
+                        <span className="text-gray-500 text-xs ml-1">/mois</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-xs text-gray-500">
+                        <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" aria-hidden="true" />
+                        4.8
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ══════════════════════════════════════════════
+          POPULAR CITIES
+      ══════════════════════════════════════════════ */}
+      <section className="py-16 bg-surface border-t border-gray-100">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="mb-10">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-1">Villes universitaires populaires</h2>
+            <p className="text-gray-600 text-sm">Des logements vérifiés dans les principaux pôles universitaires.</p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {POPULAR_STUDENT_CITIES.map(({ city: c, image, universities }) => (
+              <Link
+                key={c}
+                href={`/search?city=${encodeURIComponent(c)}`}
+                className="group relative rounded-2xl overflow-hidden h-44 block ring-1 ring-gray-200 hover:shadow-lg transition-shadow"
+                aria-label={`Logements à ${c}`}
+              >
+                <Image
+                  src={image}
+                  alt={`Vue de ${c}, Maroc`}
+                  fill
+                  className="object-cover group-hover:scale-[1.03] transition-transform duration-300"
+                  sizes="(max-width: 768px) 50vw, 33vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-gray-900/70 via-gray-900/20 to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4">
+                  <h3 className="text-white font-semibold text-lg leading-tight">{c}</h3>
+                  <p className="text-white/70 text-xs mt-0.5 truncate">{universities.slice(0, 2).join(", ")}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════
+          HOW IT WORKS
+      ══════════════════════════════════════════════ */}
+      <section className="py-16 bg-white border-t border-gray-100">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-2">Comment ça marche ?</h2>
+            <p className="text-gray-600 text-sm">Du premier clic à l'emménagement en 4 étapes.</p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { step: "01", icon: Search,      title: "Cherchez",             desc: "Filtrez par ville, type et budget parmi des annonces vérifiées." },
+              { step: "02", icon: FileText,     title: "Créez votre dossier",  desc: "Complétez votre dossier de location en ligne une seule fois." },
+              { step: "03", icon: MessageSquare, title: "Contactez l'hôte",   desc: "Échangez directement et réservez une visite en ligne." },
+              { step: "04", icon: ShieldCheck,  title: "Emménagez !",         desc: "Signez votre bail et installez-vous en toute sérénité." },
+            ].map(({ step, icon: Icon, title, desc }) => (
+              <div key={step} className="text-center">
+                <div className="w-12 h-12 brand-gradient rounded-xl flex items-center justify-center text-white mx-auto mb-4">
+                  <Icon className="w-5 h-5" aria-hidden="true" />
+                </div>
+                <div className="text-[10px] font-bold text-brand-600 uppercase tracking-widest mb-1">{step}</div>
+                <h3 className="font-semibold text-gray-900 text-sm mb-1.5">{title}</h3>
+                <p className="text-gray-600 text-xs leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════
+          TRUST BANNER
+      ══════════════════════════════════════════════ */}
+      <section className="py-16 bg-surface border-t border-gray-100">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="bg-brand-600 rounded-2xl p-10 md:p-14 text-center">
+            <div className="w-14 h-14 bg-white/10 rounded-xl flex items-center justify-center mx-auto mb-6">
+              <ShieldCheck className="text-white w-7 h-7" aria-hidden="true" />
+            </div>
+            <h2 className="text-2xl md:text-3xl font-semibold text-white mb-3">
+              Votre sécurité, notre priorité.
             </h2>
-            <p className="text-white/70 text-base font-light max-w-sm mb-8 leading-relaxed">
-              Hôtes vérifiés, annonces contrôlées, dossier sécurisé — nous protégeons chaque étape de votre recherche de logement.
+            <p className="text-blue-100 text-sm mb-8 max-w-lg mx-auto leading-relaxed">
+              Hôtes vérifiés, annonces contrôlées, dossier sécurisé — nous protégeons chaque étape
+              de votre recherche de logement.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Link href="/guarantees" className="px-8 py-4 bg-white text-accent font-bold rounded-2xl hover:scale-105 transition-all inline-block shadow-xl text-sm">
+            <div className="flex flex-wrap justify-center gap-6 mb-8">
+              {[
+                { icon: UserCheck,   label: "Hôtes vérifiés" },
+                { icon: ShieldCheck, label: "Annonces contrôlées" },
+                { icon: Clock,       label: "Réponse sous 48h" },
+                { icon: Users,       label: "Communauté étudiante" },
+              ].map(({ icon: Icon, label }) => (
+                <div key={label} className="flex items-center gap-2 text-blue-100 text-sm">
+                  <Icon className="w-4 h-4" aria-hidden="true" />
+                  {label}
+                </div>
+              ))}
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link href="/guarantees" className="px-6 py-2.5 bg-white text-brand-600 text-sm font-semibold rounded-xl hover:shadow-md transition-shadow">
                 Nos garanties
               </Link>
-              <Link href="/auth/signup" className="px-8 py-4 bg-white/10 border border-white/30 text-white font-bold rounded-2xl hover:bg-white/20 transition-all inline-block text-sm">
+              <Link href="/auth/signup" className="px-6 py-2.5 bg-white/10 border border-white/20 text-white text-sm font-semibold rounded-xl hover:bg-white/20 transition-colors">
                 Rejoindre la plateforme
               </Link>
             </div>
           </div>
-          <div className="relative z-10 grid grid-cols-2 gap-4 shrink-0">
-            {[
-              { title: "Hôtes vérifiés", icon: <UserCheck className="w-6 h-6" />, desc: "Identité contrôlée" },
-              { title: "Chat sécurisé", icon: <MessageSquare className="w-6 h-6" />, desc: "Messagerie intégrée" },
-              { title: "Portail parents", icon: <Users className="w-6 h-6" />, desc: "Transparence totale" },
-              { title: "Réservation simple", icon: <Star className="w-6 h-6" />, desc: "En quelques clics" },
-            ].map((item) => (
-              <div key={item.title} className="bg-white/10 backdrop-blur-md p-6 rounded-[1.5rem] border border-white/20 text-white text-center">
-                <div className="mb-3 flex justify-center">{item.icon}</div>
-                <div className="text-xs font-black tracking-wider mb-1">{item.title}</div>
-                <div className="text-[10px] text-white/60">{item.desc}</div>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
-      {/* ── Footer ───────────────────────────────── */}
-      <footer className="bg-primary text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-12">
-          <div className="col-span-1 md:col-span-2">
-            <div className="flex items-center gap-2 mb-6">
-              <div className="w-10 h-10 bg-accent rounded-xl flex items-center justify-center shadow-xl">
-                <Building className="text-white w-6 h-6" />
-              </div>
-              <span className="text-2xl font-black tracking-tighter">StudentHome.ma</span>
-            </div>
-            <p className="text-gray-400 max-w-md mb-8 font-light leading-relaxed">
-              La première plateforme dédiée au logement étudiant au Maroc. Des annonces vérifiées, des hôtes de confiance, et un parcours simplifié de la recherche à l'emménagement.
-            </p>
-            <p className="text-gray-500 text-xs">© 2026 StudentHome.ma — Tous droits réservés</p>
-          </div>
-          <div>
-            <h4 className="font-black mb-6 text-sm tracking-widest uppercase text-accent">Plateforme</h4>
-            <ul className="space-y-4 text-gray-400 text-sm font-medium">
-              <li><Link href="/search" className="hover:text-accent transition-colors">Chercher un logement</Link></li>
-              <li><Link href="/hosts" className="hover:text-accent transition-colors">Espace propriétaires</Link></li>
-              <li><Link href="/guarantees" className="hover:text-accent transition-colors">Nos garanties</Link></li>
-              <li><Link href="/help" className="hover:text-accent transition-colors">Centre d'aide</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-black mb-6 text-sm tracking-widest uppercase text-accent">Contact</h4>
-            <ul className="space-y-4 text-gray-400 text-sm font-medium">
-              <li>Casablanca, Maroc</li>
-              <li>support@studenthome.ma</li>
-              <li>+212 522 00 00 00</li>
-              <li className="text-xs text-gray-500 pt-2">Lun–Sam, 9h–19h</li>
-            </ul>
-          </div>
-        </div>
-      </footer>
-    </main>
+    </div>
   );
 }

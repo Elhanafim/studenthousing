@@ -20,6 +20,13 @@ enum HousingType {
   HOMESTAY
 }
 
+enum ListingType {
+  COLOC      // Je cherche un(e) colocataire
+  SUBLEASE   // Sous-location temporaire
+  CESSION    // Cession de chambre définitive
+  STANDARD   // Annonce standard (hôte professionnel)
+}
+
 enum BookingStatus {
   INQUIRY
   APPLICATION_SENT
@@ -65,6 +72,8 @@ model User {
   bookingRequests  BookingRequest[] @relation("TenantBookings")
   hostBookings     BookingRequest[] @relation("HostBookings")
   applicationFile  ApplicationFile?
+  hostedVisitSlots VisitSlot[]      @relation("HostVisits")
+  bookedVisitSlots VisitSlot[]      @relation("BookedVisits")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -75,6 +84,7 @@ model Listing {
   title        String
   description  String      @db.Text
   type         HousingType @default(ROOM)
+  listingType  ListingType @default(STANDARD)
 
   // Location
   city         String
@@ -92,7 +102,9 @@ model Listing {
   isFurnished  Boolean @default(true)
   amenities    Json?
   availableFrom DateTime?
+  availableTo   DateTime?   // null = indefinite
   minDuration  Int     @default(1) // months
+  isStudentHost Boolean @default(false)
 
   // Safety & Rules
   safetyFeatures Json?
@@ -108,8 +120,10 @@ model Listing {
   reviews         Review[]
   favorites       Favorite[]
   images          Image[]
+  videos          Video[]
   bookingRequests BookingRequest[]
   messages        Message[]
+  visitSlots      VisitSlot[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -120,6 +134,29 @@ model Image {
   url       String
   listingId String
   listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  order     Int     @default(0)
+}
+
+model Video {
+  id        String  @id @default(cuid())
+  url       String
+  listingId String
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  durationSeconds Int?
+}
+
+model VisitSlot {
+  id              String   @id @default(cuid())
+  listingId       String
+  listing         Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  hostId          String
+  host            User     @relation("HostVisits", fields: [hostId], references: [id], onDelete: Cascade)
+  date            DateTime
+  durationMinutes Int      @default(30)
+  isBooked        Boolean  @default(false)
+  bookedByUserId  String?
+  bookedBy        User?    @relation("BookedVisits", fields: [bookedByUserId], references: [id])
+  createdAt       DateTime @default(now())
 }
 
 model Review {
@@ -175,7 +212,7 @@ model ApplicationFile {
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  // Document URLs (Vercel Blob / Cloudinary integration later)
+  // Document URLs
   cinUrl         String?
   studentCardUrl String?
   enrollmentUrl  String?

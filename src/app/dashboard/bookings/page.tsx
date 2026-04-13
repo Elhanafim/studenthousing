@@ -1,6 +1,5 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import Navbar from "@/components/shared/Navbar";
 import { getBookingsForTenant, getBookingsForHost, updateBookingStatus } from "@/lib/actions/bookings";
 import { prisma } from "@/lib/prisma";
 import Image from "next/image";
@@ -35,7 +34,6 @@ export default async function BookingsPage() {
 
   return (
     <div className="min-h-screen bg-[#FAFBFE]">
-      <Navbar />
 
       <div className="max-w-5xl mx-auto px-4 py-12">
         <div className="mb-8">

@@ -1,7 +1,6 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import Navbar from "@/components/shared/Navbar";
 import {
   getUnverifiedListings,
   approveListing,
@@ -37,7 +36,6 @@ export default async function AdminPage() {
 
   return (
     <div className="min-h-screen bg-[#FAFBFE]">
-      <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="mb-10">

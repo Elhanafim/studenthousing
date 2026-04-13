@@ -2,7 +2,6 @@ import { prisma } from "@/lib/prisma";
 import Image from "next/image";
 import Link from "next/link";
 import { MapPin, Star, Building, ShieldCheck } from "lucide-react";
-import Navbar from "@/components/shared/Navbar";
 import SearchFilters from "@/components/listings/SearchFilters";
 import EmptyState from "@/components/shared/EmptyState";
 import { Suspense } from "react";
@@ -61,7 +60,6 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
   return (
     <div className="min-h-screen bg-[#FAFBFE]">
-      <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="mb-8">
