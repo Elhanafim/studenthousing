@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -20,6 +17,16 @@ enum HousingType {
   STUDIO
   APARTMENT
   COLIVING
+  HOMESTAY
+}
+
+enum BookingStatus {
+  INQUIRY
+  APPLICATION_SENT
+  PENDING_HOST_REVIEW
+  ACCEPTED
+  REJECTED
+  BOOKED
 }
 
 model User {
@@ -30,7 +37,7 @@ model User {
   password        String?
   image           String?
   role            Role      @default(STUDENT)
-  
+
   // Profile details
   phone           String?
   profession      String?
@@ -39,110 +46,181 @@ model User {
   city            String?
   age             Int?
   gender          String?
-  
+
   // Safety & Trust
-  isVerified      Boolean   @default(false)
-  safetyAnswers   Json?     // { "rentedBefore": boolean, "parentVisits": boolean, etc }
-  about           String?   @db.Text
-  
+  isVerified         Boolean   @default(false)
+  phoneVerified      Boolean   @default(false)
+  identityVerified   Boolean   @default(false)
+  responseTimeAvg    Int?      // average response time in minutes
+  safetyAnswers      Json?
+  about              String?   @db.Text
+
   // Relations
-  listings        Listing[]
-  reviewsSent     Review[]  @relation("Reviewer")
-  reviewsReceived Review[]  @relation("Reviewee")
-  messagesSent    Message[] @relation("Sender")
-  messagesReceived Message[] @relation("Receiver")
-  favorites       Favorite[]
-  
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  listings         Listing[]
+  reviewsSent      Review[]         @relation("Reviewer")
+  reviewsReceived  Review[]         @relation("Reviewee")
+  messagesSent     Message[]        @relation("Sender")
+  messagesReceived Message[]        @relation("Receiver")
+  favorites        Favorite[]
+  bookingRequests  BookingRequest[] @relation("TenantBookings")
+  hostBookings     BookingRequest[] @relation("HostBookings")
+  applicationFile  ApplicationFile?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Listing {
-  id              String      @id @default(cuid())
-  title           String
-  description     String      @db.Text
-  type            HousingType @default(ROOM)
-  
+  id           String      @id @default(cuid())
+  title        String
+  description  String      @db.Text
+  type         HousingType @default(ROOM)
+
   // Location
-  city            String
-  neighborhood    String
-  address         String
-  lat             Float?
-  lng             Float?
-  
+  city         String
+  neighborhood String
+  address      String
+  lat          Float?
+  lng          Float?
+
   // Details
-  price           Float
-  currency        String      @default("MAD")
-  size            Int?        // m2
-  bedrooms        Int?
-  bathrooms       Int?
-  isFurnished     Boolean     @default(true)
-  amenities       Json?       // ["wifi", "kitchen", etc]
-  
+  price        Float
+  currency     String  @default("MAD")
+  size         Int?
+  bedrooms     Int?
+  bathrooms    Int?
+  isFurnished  Boolean @default(true)
+  amenities    Json?
+  availableFrom DateTime?
+  minDuration  Int     @default(1) // months
+
   // Safety & Rules
-  safetyFeatures  Json?       // ["locks", "cameras", etc]
-  houseRules      Json?       // { "smoking": false, "pets": false, etc }
-  
+  safetyFeatures Json?
+  houseRules     Json?
+
   // Status
-  isActive        Boolean     @default(true)
-  isVerified      Boolean     @default(false)
-  
+  isActive   Boolean @default(true)
+  isVerified Boolean @default(false)
+
   // Relations
   hostId          String
-  host            User        @relation(fields: [hostId], references: [id], onDelete: Cascade)
+  host            User             @relation(fields: [hostId], references: [id], onDelete: Cascade)
   reviews         Review[]
   favorites       Favorite[]
   images          Image[]
-  
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
+  bookingRequests BookingRequest[]
+  messages        Message[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Image {
-  id        String   @id @default(cuid())
+  id        String  @id @default(cuid())
   url       String
   listingId String
-  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
 }
 
 model Review {
-  id          String   @id @default(cuid())
-  rating      Int      @default(5)
-  comment     String   @db.Text
-  
-  reviewerId  String
-  reviewer    User     @relation("Reviewer", fields: [reviewerId], references: [id])
-  
-  revieweeId  String?
-  reviewee    User?    @relation("Reviewee", fields: [revieweeId], references: [id])
-  
-  listingId   String?
-  listing     Listing? @relation(fields: [listingId], references: [id])
-  
-  createdAt   DateTime @default(now())
+  id        String @id @default(cuid())
+  rating    Int    @default(5)
+  comment   String @db.Text
+
+  reviewerId String
+  reviewer   User   @relation("Reviewer", fields: [reviewerId], references: [id])
+
+  revieweeId String?
+  reviewee   User?   @relation("Reviewee", fields: [revieweeId], references: [id])
+
+  listingId String?
+  listing   Listing? @relation(fields: [listingId], references: [id])
+
+  createdAt DateTime @default(now())
 }
 
 model Message {
-  id          String   @id @default(cuid())
-  content     String   @db.Text
-  
-  senderId    String
-  sender      User     @relation("Sender", fields: [senderId], references: [id])
-  
-  receiverId  String
-  receiver    User     @relation("Receiver", fields: [receiverId], references: [id])
-  
-  isRead      Boolean  @default(false)
-  createdAt   DateTime @default(now())
+  id      String @id @default(cuid())
+  content String @db.Text
+
+  senderId String
+  sender   User   @relation("Sender", fields: [senderId], references: [id])
+
+  receiverId String
+  receiver   User   @relation("Receiver", fields: [receiverId], references: [id])
+
+  listingId String?
+  listing   Listing? @relation(fields: [listingId], references: [id], onDelete: SetNull)
+
+  bookingRequestId String?
+  bookingRequest   BookingRequest? @relation(fields: [bookingRequestId], references: [id], onDelete: SetNull)
+
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
 }
 
 model Favorite {
-  id          String   @id @default(cuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  listingId   String
-  listing     Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now())
+  id        String  @id @default(cuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listingId String
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 
   @@unique([userId, listingId])
+}
+
+model ApplicationFile {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Document URLs (Vercel Blob / Cloudinary integration later)
+  cinUrl         String?
+  studentCardUrl String?
+  enrollmentUrl  String?
+  incomeProofUrl String?
+
+  // Guarantor
+  guarantorName     String?
+  guarantorPhone    String?
+  guarantorRelation String?
+
+  // Self-description
+  about         String?   @db.Text
+  budget        Int?      // MAD/month max
+  moveInDate    DateTime?
+  durationMonths Int?
+
+  isComplete Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model BookingRequest {
+  id     String        @id @default(cuid())
+  status BookingStatus @default(INQUIRY)
+
+  tenantId String
+  tenant   User   @relation("TenantBookings", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  hostId String
+  host   User   @relation("HostBookings", fields: [hostId], references: [id], onDelete: Cascade)
+
+  listingId String
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  moveInDate     DateTime?
+  durationMonths Int?
+  tenantNote     String?   @db.Text
+  hostNote       String?   @db.Text
+
+  applicationFileId String?
+  messages          Message[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([tenantId, listingId])
 }

@@ -13,8 +13,11 @@ import {
   CheckCircle,
   Home,
   Users,
+  Calendar,
+  Clock,
 } from "lucide-react";
 import { createListing } from "@/lib/actions/listings";
+import { MOROCCO_CITIES } from "@/lib/moroccoCities";
 
 type Step = 1 | 2 | 3 | 4 | 5 | 6;
 
@@ -23,9 +26,10 @@ const HOUSING_TYPES = [
   { id: "STUDIO", label: "Studio" },
   { id: "APARTMENT", label: "Appartement" },
   { id: "COLIVING", label: "Coliving" },
+  { id: "HOMESTAY", label: "Chez l'habitant" },
 ] as const;
 
-const CITIES = ["Casablanca", "Rabat", "Marrakech", "Fès", "Tanger"];
+type HousingTypeId = (typeof HOUSING_TYPES)[number]["id"];
 
 export default function CreateListingWizard() {
   const [step, setStep] = useState<Step>(1);
@@ -36,7 +40,7 @@ export default function CreateListingWizard() {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    type: "ROOM" as "ROOM" | "STUDIO" | "APARTMENT" | "COLIVING",
+    type: "ROOM" as HousingTypeId,
     city: "Casablanca",
     neighborhood: "",
     address: "",
@@ -48,8 +52,9 @@ export default function CreateListingWizard() {
     amenities: [] as string[],
     safetyFeatures: [] as string[],
     houseRules: [] as string[],
-    // Default placeholder image — hosts will upload real ones later
     images: ["https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=2070"],
+    availableFrom: "",
+    minDuration: 1,
   });
 
   const nextStep = () => setStep((s) => (s + 1) as Step);
@@ -80,7 +85,11 @@ export default function CreateListingWizard() {
   const handleSubmit = async () => {
     setLoading(true);
     setError("");
-    const res = await createListing(formData);
+    const payload = {
+      ...formData,
+      availableFrom: formData.availableFrom || undefined,
+    };
+    const res = await createListing(payload);
     setLoading(false);
 
     if (res.error) {
@@ -108,29 +117,17 @@ export default function CreateListingWizard() {
                 step >= s ? "clay-gradient text-white" : "bg-white text-gray-400 border border-gray-100"
               }`}
             >
-              {step > s || success ? (
-                <CheckCircle className="w-6 h-6" />
-              ) : (
-                <span className="text-sm font-bold">{s}</span>
-              )}
+              {step > s || success ? <CheckCircle className="w-6 h-6" /> : <span className="text-sm font-bold">{s}</span>}
             </div>
           ))}
         </div>
 
         <AnimatePresence mode="wait">
-          {/* ── Step 1 : Basic Info ───────────────────────────── */}
+          {/* ── Step 1 : Basic Info ── */}
           {step === 1 && (
-            <motion.div
-              key="s1"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="space-y-8"
-            >
+            <motion.div key="s1" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-8">
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 bg-accent/10 rounded-2xl flex items-center justify-center text-accent">
-                  <Building />
-                </div>
+                <div className="w-12 h-12 bg-accent/10 rounded-2xl flex items-center justify-center text-accent"><Building /></div>
                 <div>
                   <h2 className="text-3xl font-bold text-primary">Informations de base</h2>
                   <p className="text-gray-400 font-light">Où se situe votre propriété ?</p>
@@ -138,45 +135,26 @@ export default function CreateListingWizard() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Title */}
                 <div className="col-span-1 md:col-span-2 space-y-2">
                   <label className={labelCls}>Titre de l&apos;annonce</label>
-                  <input
-                    type="text"
-                    name="title"
-                    value={formData.title}
-                    onChange={handleInputChange}
-                    placeholder="ex : Studio moderne proche de l'UM6P Rabat"
-                    className={inputCls}
-                  />
+                  <input type="text" name="title" value={formData.title} onChange={handleInputChange} placeholder="ex : Studio moderne proche de l'UM6P Rabat" className={inputCls} />
                 </div>
 
-                {/* Description */}
                 <div className="col-span-1 md:col-span-2 space-y-2">
                   <label className={labelCls}>Description (20 caractères min.)</label>
-                  <textarea
-                    name="description"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    rows={4}
-                    placeholder="Décrivez votre logement : ambiance, atouts, proximité des universités..."
-                    className={`${inputCls} resize-none`}
-                  />
+                  <textarea name="description" value={formData.description} onChange={handleInputChange} rows={4} placeholder="Décrivez votre logement : ambiance, atouts, proximité des universités..." className={`${inputCls} resize-none`} />
                 </div>
 
-                {/* Housing type */}
                 <div className="col-span-1 md:col-span-2 space-y-2">
                   <label className={labelCls}>Type de logement</label>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
                     {HOUSING_TYPES.map((t) => (
                       <button
                         key={t.id}
                         type="button"
                         onClick={() => setFormData((p) => ({ ...p, type: t.id }))}
                         className={`p-3 rounded-2xl border-2 text-sm font-bold transition-all ${
-                          formData.type === t.id
-                            ? "border-accent bg-accent/5 text-accent"
-                            : "border-gray-100 bg-gray-50 text-gray-500 hover:border-accent/30"
+                          formData.type === t.id ? "border-accent bg-accent/5 text-accent" : "border-gray-100 bg-gray-50 text-gray-500 hover:border-accent/30"
                         }`}
                       >
                         {t.label}
@@ -185,78 +163,38 @@ export default function CreateListingWizard() {
                   </div>
                 </div>
 
-                {/* City */}
                 <div className="space-y-2">
                   <label className={labelCls}>Ville</label>
-                  <select
-                    name="city"
-                    value={formData.city}
-                    onChange={handleInputChange}
-                    className={inputCls}
-                  >
-                    {CITIES.map((c) => (
-                      <option key={c} value={c}>
-                        {c}
-                      </option>
+                  <select name="city" value={formData.city} onChange={handleInputChange} className={inputCls}>
+                    {MOROCCO_CITIES.map((c) => (
+                      <option key={c} value={c}>{c}</option>
                     ))}
                   </select>
                 </div>
 
-                {/* Neighborhood */}
                 <div className="space-y-2">
                   <label className={labelCls}>Quartier</label>
-                  <input
-                    type="text"
-                    name="neighborhood"
-                    value={formData.neighborhood}
-                    onChange={handleInputChange}
-                    placeholder="ex : Agdal, Maârif"
-                    className={inputCls}
-                  />
+                  <input type="text" name="neighborhood" value={formData.neighborhood} onChange={handleInputChange} placeholder="ex : Agdal, Maârif" className={inputCls} />
                 </div>
 
-                {/* Address */}
                 <div className="col-span-1 md:col-span-2 space-y-2">
                   <label className={labelCls}>Adresse complète</label>
-                  <input
-                    type="text"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleInputChange}
-                    placeholder="L'adresse exacte pour la vérification"
-                    className={inputCls}
-                  />
+                  <input type="text" name="address" value={formData.address} onChange={handleInputChange} placeholder="L'adresse exacte pour la vérification" className={inputCls} />
                 </div>
               </div>
 
-              <button
-                onClick={nextStep}
-                className="w-full md:w-auto px-12 py-4 rounded-2xl clay-gradient text-white font-bold flex items-center justify-center gap-2"
-              >
+              <button onClick={nextStep} className="w-full md:w-auto px-12 py-4 rounded-2xl clay-gradient text-white font-bold flex items-center justify-center gap-2">
                 Continuer <ArrowRight className="w-5 h-5" />
               </button>
             </motion.div>
           )}
 
-          {/* ── Step 2 : Property Details ─────────────────────── */}
+          {/* ── Step 2 : Property Details ── */}
           {step === 2 && (
-            <motion.div
-              key="s2"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="space-y-8"
-            >
-              <button
-                onClick={prevStep}
-                className="text-gray-400 flex items-center gap-2 font-bold text-sm hover:text-accent"
-              >
-                <ArrowLeft className="w-4 h-4" /> Retour
-              </button>
+            <motion.div key="s2" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-8">
+              <button onClick={prevStep} className="text-gray-400 flex items-center gap-2 font-bold text-sm hover:text-accent"><ArrowLeft className="w-4 h-4" /> Retour</button>
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-accent/10 rounded-2xl flex items-center justify-center text-accent">
-                  <Home />
-                </div>
+                <div className="w-12 h-12 bg-accent/10 rounded-2xl flex items-center justify-center text-accent"><Home /></div>
                 <div>
                   <h2 className="text-3xl font-bold text-primary">Détails de la propriété</h2>
                   <p className="text-gray-400 font-light">Parlez-nous de l&apos;espace.</p>
@@ -271,15 +209,7 @@ export default function CreateListingWizard() {
                 ].map((f) => (
                   <div key={f.name} className="space-y-2">
                     <label className={labelCls}>{f.label}</label>
-                    <input
-                      type="number"
-                      name={f.name}
-                      value={(formData as any)[f.name]}
-                      onChange={handleInputChange}
-                      placeholder={f.placeholder}
-                      min={0}
-                      className={inputCls}
-                    />
+                    <input type="number" name={f.name} value={(formData as any)[f.name]} onChange={handleInputChange} placeholder={f.placeholder} min={0} className={inputCls} />
                   </div>
                 ))}
               </div>
@@ -287,215 +217,128 @@ export default function CreateListingWizard() {
               <div>
                 <label className={`${labelCls} mb-3`}>Équipements</label>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {["Wifi", "Ascenseur", "Cuisine", "Bureau", "Climatisation", "Machine à laver", "Parking", "Gardien"].map(
-                    (am) => (
-                      <label
-                        key={am}
-                        className={`flex items-center gap-3 p-4 rounded-2xl border cursor-pointer transition-all ${
-                          formData.amenities.includes(am)
-                            ? "border-accent bg-accent/5"
-                            : "border-gray-50 bg-gray-50 hover:border-accent/30"
-                        }`}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={formData.amenities.includes(am)}
-                          onChange={() => toggleItem("amenities", am)}
-                          className="w-5 h-5 accent-accent"
-                        />
-                        <span className="text-sm font-medium text-gray-600">{am}</span>
-                      </label>
-                    )
-                  )}
+                  {["Wifi", "Ascenseur", "Cuisine", "Bureau", "Climatisation", "Machine à laver", "Parking", "Gardien"].map((am) => (
+                    <label key={am} className={`flex items-center gap-3 p-4 rounded-2xl border cursor-pointer transition-all ${formData.amenities.includes(am) ? "border-accent bg-accent/5" : "border-gray-50 bg-gray-50 hover:border-accent/30"}`}>
+                      <input type="checkbox" checked={formData.amenities.includes(am)} onChange={() => toggleItem("amenities", am)} className="w-5 h-5 accent-accent" />
+                      <span className="text-sm font-medium text-gray-600">{am}</span>
+                    </label>
+                  ))}
                 </div>
               </div>
 
-              <button
-                onClick={nextStep}
-                className="w-full md:w-auto px-12 py-4 rounded-2xl clay-gradient text-white font-bold flex items-center justify-center gap-2"
-              >
+              <button onClick={nextStep} className="w-full md:w-auto px-12 py-4 rounded-2xl clay-gradient text-white font-bold flex items-center justify-center gap-2">
                 Continuer <ArrowRight className="w-5 h-5" />
               </button>
             </motion.div>
           )}
 
-          {/* ── Step 3 : Pricing ─────────────────────────────── */}
+          {/* ── Step 3 : Pricing & Availability ── */}
           {step === 3 && (
-            <motion.div
-              key="s3"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="space-y-8"
-            >
-              <button
-                onClick={prevStep}
-                className="text-gray-400 flex items-center gap-2 font-bold text-sm hover:text-accent"
-              >
-                <ArrowLeft className="w-4 h-4" /> Retour
-              </button>
+            <motion.div key="s3" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-8">
+              <button onClick={prevStep} className="text-gray-400 flex items-center gap-2 font-bold text-sm hover:text-accent"><ArrowLeft className="w-4 h-4" /> Retour</button>
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-accent/10 rounded-2xl flex items-center justify-center text-accent">
-                  <DollarSign />
-                </div>
+                <div className="w-12 h-12 bg-accent/10 rounded-2xl flex items-center justify-center text-accent"><DollarSign /></div>
                 <div>
-                  <h2 className="text-3xl font-bold text-primary">Prix & Conditions</h2>
-                  <p className="text-gray-400 font-light">Fixez votre loyer mensuel.</p>
+                  <h2 className="text-3xl font-bold text-primary">Prix & Disponibilité</h2>
+                  <p className="text-gray-400 font-light">Fixez votre loyer et vos conditions.</p>
                 </div>
               </div>
 
               <div className="max-w-md space-y-6">
                 <div className="bg-accent/5 p-8 rounded-[2rem] border-2 border-accent/10">
-                  <label className="text-xs uppercase tracking-widest font-black text-accent mb-2 block">
-                    Loyer mensuel
-                  </label>
+                  <label className="text-xs uppercase tracking-widest font-black text-accent mb-2 block">Loyer mensuel</label>
                   <div className="flex items-center gap-4">
                     <span className="text-4xl font-black text-primary">MAD</span>
-                    <input
-                      type="number"
-                      name="price"
-                      value={formData.price || ""}
-                      onChange={handleInputChange}
-                      placeholder="4500"
-                      min={0}
-                      className="bg-transparent border-none text-4xl font-black text-accent w-full focus:outline-none"
-                    />
+                    <input type="number" name="price" value={formData.price || ""} onChange={handleInputChange} placeholder="4500" min={0} className="bg-transparent border-none text-4xl font-black text-accent w-full focus:outline-none" />
                   </div>
                 </div>
 
                 <label className="flex items-center gap-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={formData.isFurnished}
-                    onChange={(e) =>
-                      setFormData((p) => ({ ...p, isFurnished: e.target.checked }))
-                    }
-                    className="w-5 h-5 accent-accent"
-                  />
+                  <input type="checkbox" checked={formData.isFurnished} onChange={(e) => setFormData((p) => ({ ...p, isFurnished: e.target.checked }))} className="w-5 h-5 accent-accent" />
                   <span className="text-sm text-gray-500">Logement meublé</span>
                 </label>
+
+                <div className="space-y-2">
+                  <label className={labelCls}>
+                    <Calendar className="w-3.5 h-3.5 inline mr-1" />
+                    Disponible dès le
+                  </label>
+                  <input type="date" name="availableFrom" value={formData.availableFrom} onChange={handleInputChange} min={new Date().toISOString().split("T")[0]} className={inputCls} />
+                </div>
+
+                <div className="space-y-2">
+                  <label className={labelCls}>
+                    <Clock className="w-3.5 h-3.5 inline mr-1" />
+                    Durée minimale (mois)
+                  </label>
+                  <select name="minDuration" value={formData.minDuration} onChange={handleInputChange} className={inputCls}>
+                    {[1, 2, 3, 4, 6, 9, 12].map((m) => (
+                      <option key={m} value={m}>{m} mois</option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
-              <button
-                onClick={nextStep}
-                className="w-full md:w-auto px-12 py-4 rounded-2xl clay-gradient text-white font-bold flex items-center justify-center gap-2"
-              >
+              <button onClick={nextStep} className="w-full md:w-auto px-12 py-4 rounded-2xl clay-gradient text-white font-bold flex items-center justify-center gap-2">
                 Continuer <ArrowRight className="w-5 h-5" />
               </button>
             </motion.div>
           )}
 
-          {/* ── Step 4 : Photos (placeholder) ────────────────── */}
+          {/* ── Step 4 : Photos (placeholder) ── */}
           {step === 4 && (
-            <motion.div
-              key="s4"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="space-y-8"
-            >
-              <button
-                onClick={prevStep}
-                className="text-gray-400 flex items-center gap-2 font-bold text-sm hover:text-accent"
-              >
-                <ArrowLeft className="w-4 h-4" /> Retour
-              </button>
+            <motion.div key="s4" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-8">
+              <button onClick={prevStep} className="text-gray-400 flex items-center gap-2 font-bold text-sm hover:text-accent"><ArrowLeft className="w-4 h-4" /> Retour</button>
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-accent/10 rounded-2xl flex items-center justify-center text-accent">
-                  <Camera />
-                </div>
+                <div className="w-12 h-12 bg-accent/10 rounded-2xl flex items-center justify-center text-accent"><Camera /></div>
                 <div>
                   <h2 className="text-3xl font-bold text-primary">Photos & Médias</h2>
-                  <p className="text-gray-400 font-light">
-                    De belles photos augmentent vos chances de réservation.
-                  </p>
+                  <p className="text-gray-400 font-light">De belles photos augmentent vos chances de réservation.</p>
                 </div>
               </div>
 
               <div className="border-4 border-dashed border-gray-100 rounded-[2.5rem] p-20 text-center hover:border-accent/30 transition-all cursor-pointer bg-gray-50/50">
                 <Camera className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                <div className="text-lg font-bold text-gray-500">
-                  Glissez-déposez vos photos ici
-                </div>
+                <div className="text-lg font-bold text-gray-500">Glissez-déposez vos photos ici</div>
                 <p className="text-sm text-gray-400 font-light mt-2">
                   L&apos;upload d&apos;images sera disponible prochainement. Une image par défaut est utilisée.
                 </p>
               </div>
 
-              <button
-                onClick={nextStep}
-                className="w-full md:w-auto px-12 py-4 rounded-2xl clay-gradient text-white font-bold flex items-center justify-center gap-2"
-              >
+              <button onClick={nextStep} className="w-full md:w-auto px-12 py-4 rounded-2xl clay-gradient text-white font-bold flex items-center justify-center gap-2">
                 Continuer <ArrowRight className="w-5 h-5" />
               </button>
             </motion.div>
           )}
 
-          {/* ── Step 5 : Safety & Rules ───────────────────────── */}
+          {/* ── Step 5 : Safety & Rules ── */}
           {step === 5 && (
-            <motion.div
-              key="s5"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="space-y-8"
-            >
-              <button
-                onClick={prevStep}
-                className="text-gray-400 flex items-center gap-2 font-bold text-sm hover:text-accent"
-              >
-                <ArrowLeft className="w-4 h-4" /> Retour
-              </button>
+            <motion.div key="s5" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-8">
+              <button onClick={prevStep} className="text-gray-400 flex items-center gap-2 font-bold text-sm hover:text-accent"><ArrowLeft className="w-4 h-4" /> Retour</button>
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-accent/10 rounded-2xl flex items-center justify-center text-accent">
-                  <Shield />
-                </div>
+                <div className="w-12 h-12 bg-accent/10 rounded-2xl flex items-center justify-center text-accent"><Shield /></div>
                 <div>
                   <h2 className="text-3xl font-bold text-primary">Sécurité & Règles</h2>
-                  <p className="text-gray-400 font-light">
-                    Définissez les règles pour une colocation paisible.
-                  </p>
+                  <p className="text-gray-400 font-light">Définissez les règles pour une colocation paisible.</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-4">
-                  <h4 className="font-bold text-gray-700 flex items-center gap-2">
-                    <Shield className="w-4 h-4" /> Caractéristiques de sécurité
-                  </h4>
-                  {["Serrures de porte", "Sécurité de l'immeuble", "Caméras externes", "Extincteur"].map(
-                    (sec) => (
-                      <label key={sec} className="flex items-center gap-3 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={formData.safetyFeatures.includes(sec)}
-                          onChange={() => toggleItem("safetyFeatures", sec)}
-                          className="w-5 h-5 accent-accent"
-                        />
-                        <span className="text-sm text-gray-500">{sec}</span>
-                      </label>
-                    )
-                  )}
+                  <h4 className="font-bold text-gray-700 flex items-center gap-2"><Shield className="w-4 h-4" /> Caractéristiques de sécurité</h4>
+                  {["Serrures de porte", "Sécurité de l'immeuble", "Caméras externes", "Extincteur"].map((sec) => (
+                    <label key={sec} className="flex items-center gap-3 cursor-pointer">
+                      <input type="checkbox" checked={formData.safetyFeatures.includes(sec)} onChange={() => toggleItem("safetyFeatures", sec)} className="w-5 h-5 accent-accent" />
+                      <span className="text-sm text-gray-500">{sec}</span>
+                    </label>
+                  ))}
                 </div>
 
                 <div className="space-y-4">
-                  <h4 className="font-bold text-gray-700 flex items-center gap-2">
-                    <Users className="w-4 h-4" /> Règlement intérieur
-                  </h4>
-                  {[
-                    "Non-fumeur",
-                    "Pas d'animaux",
-                    "Pas de fêtes",
-                    "Femmes uniquement",
-                    "Visites parents autorisées",
-                  ].map((r) => (
+                  <h4 className="font-bold text-gray-700 flex items-center gap-2"><Users className="w-4 h-4" /> Règlement intérieur</h4>
+                  {["Non-fumeur", "Pas d'animaux", "Pas de fêtes", "Femmes uniquement", "Visites parents autorisées"].map((r) => (
                     <label key={r} className="flex items-center gap-3 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={formData.houseRules.includes(r)}
-                        onChange={() => toggleItem("houseRules", r)}
-                        className="w-5 h-5 accent-accent"
-                      />
+                      <input type="checkbox" checked={formData.houseRules.includes(r)} onChange={() => toggleItem("houseRules", r)} className="w-5 h-5 accent-accent" />
                       <span className="text-sm text-gray-500">{r}</span>
                     </label>
                   ))}
@@ -504,43 +347,27 @@ export default function CreateListingWizard() {
 
               {error && <p className="text-red-500 text-sm">{error}</p>}
 
-              <button
-                onClick={handleSubmit}
-                disabled={loading}
-                className="w-full md:w-auto px-12 py-4 rounded-2xl premium-gradient text-white font-bold flex items-center justify-center gap-2 shadow-xl disabled:opacity-50"
-              >
+              <button onClick={handleSubmit} disabled={loading} className="w-full md:w-auto px-12 py-4 rounded-2xl premium-gradient text-white font-bold flex items-center justify-center gap-2 shadow-xl disabled:opacity-50">
                 {loading ? "Traitement..." : "Publier l'annonce"} <ArrowRight className="w-5 h-5" />
               </button>
             </motion.div>
           )}
 
-          {/* ── Step 6 : Success ─────────────────────────────── */}
+          {/* ── Step 6 : Success ── */}
           {step === 6 && (
-            <motion.div
-              key="s6"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="text-center py-12"
-            >
+            <motion.div key="s6" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="text-center py-12">
               <div className="w-24 h-24 clay-gradient rounded-full flex items-center justify-center mx-auto mb-8 text-white">
                 <CheckCircle className="w-12 h-12" />
               </div>
               <h2 className="text-4xl font-bold text-primary mb-4">Annonce publiée !</h2>
               <p className="text-gray-500 font-light mb-12 max-w-md mx-auto">
-                Votre annonce est maintenant visible par des milliers d&apos;étudiants au Maroc.
+                Votre annonce est maintenant visible par des milliers d&apos;étudiants au Maroc. Notre équipe la vérifiera prochainement.
               </p>
               <div className="flex flex-col md:flex-row gap-4 justify-center">
-                <a
-                  href="/dashboard"
-                  className="px-12 py-4 rounded-2xl premium-gradient text-white font-bold shadow-2xl hover:scale-105 transition-all inline-block"
-                >
+                <a href="/dashboard" className="px-12 py-4 rounded-2xl premium-gradient text-white font-bold shadow-2xl hover:scale-105 transition-all inline-block">
                   Aller au tableau de bord
                 </a>
-                <a
-                  href="/search"
-                  className="px-12 py-4 rounded-2xl border-2 border-primary text-primary font-bold hover:bg-primary hover:text-white transition-all inline-block"
-                >
+                <a href="/search" className="px-12 py-4 rounded-2xl border-2 border-primary text-primary font-bold hover:bg-primary hover:text-white transition-all inline-block">
                   Voir les annonces
                 </a>
               </div>
