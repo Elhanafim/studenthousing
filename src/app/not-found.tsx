@@ -1,8 +1,7 @@
+"use client";
+
 import Link from "next/link";
 import { Search, Home, ArrowLeft } from "lucide-react";
-import type { Metadata } from "next";
-
-export const metadata: Metadata = { title: "Page introuvable" };
 
 export default function NotFound() {
   return (
@@ -31,8 +30,10 @@ export default function NotFound() {
           <Link href="/" className="inline-flex items-center justify-center gap-2 px-5 py-2.5 brand-gradient text-white text-sm font-semibold rounded-xl hover:shadow-md transition-shadow">
             <Home className="w-4 h-4" /> Accueil
           </Link>
-          <button onClick={() => history.back()}
-            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 border border-gray-200 text-gray-700 text-sm font-medium rounded-xl hover:bg-gray-50 transition-colors">
+          <button
+            onClick={() => history.back()}
+            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 border border-gray-200 text-gray-700 text-sm font-medium rounded-xl hover:bg-gray-50 transition-colors"
+          >
             <ArrowLeft className="w-4 h-4" /> Retour
           </button>
         </div>
