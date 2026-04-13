@@ -19,7 +19,7 @@ import Navbar from "@/components/shared/Navbar";
 import DeleteListingButton from "@/components/dashboard/DeleteListingButton";
 import ListingCompletionBar from "@/components/dashboard/ListingCompletionBar";
 import { computeCompletionScore } from "@/lib/utils/listing";
-import { getDossierCompletionPercent } from "@/lib/actions/dossier";
+import { getDossierCompletionPercent } from "@/lib/utils/dossier";
 
 export const dynamic = "force-dynamic";
 

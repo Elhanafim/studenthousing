@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Navbar from "@/components/shared/Navbar";
 import DossierForm from "@/components/dashboard/DossierForm";
-import { getDossierCompletionPercent } from "@/lib/actions/dossier";
+import { getDossierCompletionPercent } from "@/lib/utils/dossier";
 import { FileText, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 
