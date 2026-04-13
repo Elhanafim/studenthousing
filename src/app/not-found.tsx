@@ -1,7 +1,8 @@
-"use client";
-
 import Link from "next/link";
-import { Search, Home, ArrowLeft } from "lucide-react";
+import { Search, Home } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Page introuvable" };
 
 export default function NotFound() {
   return (
@@ -16,7 +17,6 @@ export default function NotFound() {
           Utilisez la recherche pour trouver ce dont vous avez besoin.
         </p>
 
-        {/* Search shortcut */}
         <div className="bg-white rounded-xl ring-1 ring-gray-200 p-4 mb-6">
           <div className="flex items-center gap-3">
             <Search className="w-5 h-5 text-gray-400 shrink-0" aria-hidden="true" />
@@ -26,17 +26,12 @@ export default function NotFound() {
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link href="/" className="inline-flex items-center justify-center gap-2 px-5 py-2.5 brand-gradient text-white text-sm font-semibold rounded-xl hover:shadow-md transition-shadow">
-            <Home className="w-4 h-4" /> Accueil
-          </Link>
-          <button
-            onClick={() => history.back()}
-            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 border border-gray-200 text-gray-700 text-sm font-medium rounded-xl hover:bg-gray-50 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" /> Retour
-          </button>
-        </div>
+        <Link
+          href="/"
+          className="inline-flex items-center justify-center gap-2 px-6 py-2.5 brand-gradient text-white text-sm font-semibold rounded-xl hover:shadow-md transition-shadow"
+        >
+          <Home className="w-4 h-4" /> Retour à l&apos;accueil
+        </Link>
       </div>
     </div>
   );
