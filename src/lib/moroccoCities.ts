@@ -61,32 +61,32 @@ export type MoroccoCity = (typeof MOROCCO_CITIES)[number];
 export const POPULAR_STUDENT_CITIES = [
   {
     city: "Casablanca",
-    image: "https://images.unsplash.com/photo-1577791465485-b9bbf500abb2?q=80&w=800",
+    image: "/cities/casablanca.jpg",
     universities: ["ESCA", "HEM", "ESITH", "ENCG Casablanca"],
   },
   {
     city: "Rabat",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=800",
+    image: "/cities/rabat.jpg",
     universities: ["UM5", "INSEA", "ENSSUP", "INPT"],
   },
   {
     city: "Fès",
-    image: "https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=800",
+    image: "/cities/fez.jpg",
     universities: ["USMBA", "Université Al Qaraouiyine", "ENSA Fès"],
   },
   {
     city: "Marrakech",
-    image: "https://images.unsplash.com/photo-1587974928442-e3e90e66d512?q=80&w=800",
+    image: "/cities/marrakech.jpg",
     universities: ["UCA", "ENCG Marrakech", "ENSA Marrakech"],
   },
   {
     city: "Agadir",
-    image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800",
+    image: "/cities/agadir.jpg",
     universities: ["Ibn Zohr", "ENCG Agadir", "ENSA Agadir"],
   },
   {
     city: "Tanger",
-    image: "https://images.unsplash.com/photo-1570168007204-dfb528c6958f?q=80&w=800",
+    image: "/cities/tanger.jpg",
     universities: ["Abdelmalek Essaadi", "ENCG Tanger", "ENSA Tanger"],
   },
 ] as const;

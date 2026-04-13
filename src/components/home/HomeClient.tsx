@@ -58,8 +58,17 @@ export default function HomeClient({ listings }: { listings: any[] }) {
       {/* ══════════════════════════════════════════════
           HERO
       ══════════════════════════════════════════════ */}
-      <section className="bg-white border-b border-gray-100 py-20 md:py-28">
-        <div className="max-w-4xl mx-auto px-4 text-center">
+      <section className="relative border-b border-gray-100 py-20 md:py-28 overflow-hidden">
+        <Image
+          src="/hero.jpg"
+          alt="Maroc"
+          fill
+          className="object-cover"
+          priority
+          sizes="100vw"
+        />
+        <div className="absolute inset-0 bg-white/80" />
+        <div className="relative max-w-4xl mx-auto px-4 text-center">
 
           {/* Badge */}
           <div className="inline-flex items-center gap-2 bg-accent-100 text-accent-700 px-4 py-1.5 rounded-full text-xs font-semibold mb-6 border border-accent-100">
