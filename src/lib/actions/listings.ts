@@ -8,11 +8,21 @@ import { revalidatePath } from "next/cache";
 const listingSchema = z.object({
   title: z.string().min(5, "Le titre doit comporter au moins 5 caractères"),
   description: z.string().min(50, "La description doit comporter au moins 50 caractères"),
-  mapsLink: z.string().url("Le lien Google Maps doit être une URL valide").min(1, "Le lien Google Maps est obligatoire"),
+  mapsLink: z
+    .string()
+    .min(1, "Le lien Google Maps est obligatoire.")
+    .refine(
+      (url) =>
+        url.startsWith("http") &&
+        (url.includes("google.com/maps") ||
+          url.includes("maps.app.goo.gl") ||
+          url.includes("goo.gl/maps")),
+      "Veuillez fournir un lien Google Maps valide (ex: https://maps.app.goo.gl/...)."
+    ),
   type: z.enum(["ROOM", "STUDIO", "APARTMENT", "COLIVING", "HOMESTAY"]),
   listingType: z.enum(["COLOC", "SUBLEASE", "CESSION", "STANDARD"]).default("STANDARD"),
   city: z.string().min(2, "La ville est requise"),
-  neighborhood: z.string().min(2, "Le quartier est requis"),
+  neighborhood: z.string().min(1, "Veuillez indiquer la localisation du logement."),
   address: z.string().min(5, "L'adresse est requise"),
   price: z.number().min(1, "Le loyer est requis"),
   size: z.number().optional(),

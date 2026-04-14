@@ -68,6 +68,7 @@ export default function PublishWizard() {
     city: "Casablanca",
     neighborhood: "",
     address: "",
+    mapsLink: "",
     price: 0,
     size: 0,
     bedrooms: 1,
@@ -101,8 +102,26 @@ export default function PublishWizard() {
     }));
   };
 
+  const isValidMapsLink = (url: string) =>
+    url.startsWith("http") &&
+    (url.includes("google.com/maps") ||
+      url.includes("maps.app.goo.gl") ||
+      url.includes("goo.gl/maps"));
+
   const handleSubmit = async () => {
     if (!listingType) return;
+    if (!formData.neighborhood.trim()) {
+      setError("Veuillez indiquer la localisation du logement.");
+      return;
+    }
+    if (!formData.mapsLink.trim()) {
+      setError("Veuillez fournir un lien Google Maps valide (ex: https://maps.app.goo.gl/...).");
+      return;
+    }
+    if (!isValidMapsLink(formData.mapsLink)) {
+      setError("Veuillez fournir un lien Google Maps valide (ex: https://maps.app.goo.gl/...).");
+      return;
+    }
     if (images.length < 2) { setError("Veuillez ajouter au moins 2 photos."); return; }
     if (videos.length < 1) { setError("Veuillez ajouter au moins 1 vidéo."); return; }
 
@@ -258,15 +277,36 @@ export default function PublishWizard() {
                 </div>
 
                 <div>
-                  <label className={labelCls} htmlFor="neighborhood">Quartier</label>
+                  <label className={labelCls} htmlFor="neighborhood">
+                    Quartier <span className="text-red-500">*</span>
+                  </label>
                   <input id="neighborhood" type="text" name="neighborhood" value={formData.neighborhood}
-                    onChange={handleInput} placeholder="ex : Maârif, Agdal" className={inputCls} />
+                    onChange={handleInput} placeholder="ex : Maârif, Agdal" className={inputCls} required />
                 </div>
 
                 <div className="sm:col-span-2">
                   <label className={labelCls} htmlFor="address">Adresse complète</label>
                   <input id="address" type="text" name="address" value={formData.address} onChange={handleInput}
                     placeholder="Adresse exacte (pour vérification)" className={inputCls} />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className={labelCls} htmlFor="mapsLink">
+                    <MapPin className="w-3.5 h-3.5 inline mr-1" />
+                    Lien Google Maps du logement <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    id="mapsLink"
+                    type="url"
+                    name="mapsLink"
+                    value={formData.mapsLink}
+                    onChange={handleInput}
+                    placeholder="https://maps.app.goo.gl/..."
+                    className={inputCls}
+                  />
+                  <p className="text-[11px] text-gray-400 mt-1.5 leading-relaxed">
+                    Ouvrez Google Maps, cherchez votre adresse, cliquez sur &quot;Partager&quot; puis copiez le lien.
+                  </p>
                 </div>
 
                 <div>
@@ -396,8 +436,12 @@ export default function PublishWizard() {
                   <span className="font-medium text-gray-900 text-right max-w-[60%] truncate">{formData.title || "—"}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Ville</span>
-                  <span className="font-medium text-gray-900">{formData.city}</span>
+                  <span className="text-gray-500">Ville / Quartier</span>
+                  <span className="font-medium text-gray-900">{formData.city}{formData.neighborhood ? `, ${formData.neighborhood}` : ""}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Lien Maps</span>
+                  <span className="font-medium text-gray-900 text-right max-w-[60%] truncate text-xs">{formData.mapsLink || "—"}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-500">Loyer</span>

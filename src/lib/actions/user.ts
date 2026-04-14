@@ -52,9 +52,9 @@ export async function registerUser(formData: z.infer<typeof registerSchema>) {
       data: { token, email: user.email!, expiresAt },
     });
 
-    // Send verification email (non-blocking — if SMTP not configured, registration still succeeds)
+    // Send verification email (non-blocking — if Resend not configured, registration still succeeds)
     try {
-      await sendVerificationEmail(user.email!, token);
+      await sendVerificationEmail(user.email!, token, user.name ?? undefined);
     } catch (err) {
       console.error("Failed to send verification email:", err);
     }
