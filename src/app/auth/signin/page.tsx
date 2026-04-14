@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import SignInForm from "@/components/auth/SignInForm";
 
 export const metadata = {
@@ -25,7 +26,9 @@ export default function SignInPage() {
           Connectez-vous pour accéder à votre espace.
         </p>
 
-        <SignInForm />
+        <Suspense fallback={null}>
+          <SignInForm />
+        </Suspense>
       </div>
 
       {/* Footer links */}
