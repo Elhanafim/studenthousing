@@ -13,14 +13,38 @@ async function requireAdmin() {
   return userId;
 }
 
-export async function getUnverifiedListings() {
+export async function getAdminStats() {
   const adminId = await requireAdmin();
-  if (!adminId) return { error: "Accès réservé aux administrateurs." };
+  if (!adminId) return { error: "Accès réservé." };
+
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+  const [totalUsers, totalListings, pendingListings, totalMessages, newUsers, newListings] =
+    await Promise.all([
+      prisma.user.count({ where: { role: { not: "ADMIN" } } }),
+      prisma.listing.count({ where: { isActive: true } }),
+      prisma.listing.count({ where: { isVerified: false, isActive: true } }),
+      prisma.message.count(),
+      prisma.user.count({ where: { createdAt: { gte: sevenDaysAgo }, role: { not: "ADMIN" } } }),
+      prisma.listing.count({ where: { createdAt: { gte: sevenDaysAgo } } }),
+    ]);
+
+  return { totalUsers, totalListings, pendingListings, totalMessages, newUsers, newListings };
+}
+
+export async function getAllListings(status?: string) {
+  const adminId = await requireAdmin();
+  if (!adminId) return { error: "Accès réservé." };
+
+  const where: any = {};
+  if (status === "pending") { where.isVerified = false; where.isActive = true; }
+  else if (status === "active") { where.isVerified = true; where.isActive = true; }
+  else if (status === "rejected") { where.isActive = false; }
 
   const listings = await prisma.listing.findMany({
-    where: { isVerified: false, isActive: true },
+    where,
     include: {
-      host: { select: { id: true, name: true, email: true, isVerified: true } },
+      host: { select: { id: true, name: true, email: true } },
       images: { take: 1 },
     },
     orderBy: { createdAt: "desc" },
@@ -28,45 +52,68 @@ export async function getUnverifiedListings() {
   return { listings };
 }
 
+export async function getUnverifiedListings() {
+  return getAllListings("pending");
+}
+
 export async function approveListing(listingId: string) {
   const adminId = await requireAdmin();
-  if (!adminId) return { error: "Accès réservé aux administrateurs." };
-
-  await prisma.listing.update({ where: { id: listingId }, data: { isVerified: true } });
+  if (!adminId) return { error: "Accès réservé." };
+  await prisma.listing.update({ where: { id: listingId }, data: { isVerified: true, isActive: true } });
   revalidatePath("/admin");
   return { success: true };
 }
 
-export async function rejectListing(listingId: string, reason?: string) {
+export async function rejectListing(listingId: string) {
   const adminId = await requireAdmin();
-  if (!adminId) return { error: "Accès réservé aux administrateurs." };
-
-  await prisma.listing.update({ where: { id: listingId }, data: { isActive: false } });
+  if (!adminId) return { error: "Accès réservé." };
+  await prisma.listing.update({ where: { id: listingId }, data: { isActive: false, isVerified: false } });
   revalidatePath("/admin");
   return { success: true };
 }
 
-export async function getUnverifiedUsers() {
+export async function deleteListing(listingId: string) {
   const adminId = await requireAdmin();
-  if (!adminId) return { error: "Accès réservé aux administrateurs." };
+  if (!adminId) return { error: "Accès réservé." };
+  await prisma.listing.delete({ where: { id: listingId } });
+  revalidatePath("/admin");
+  return { success: true };
+}
+
+export async function getAllUsers() {
+  const adminId = await requireAdmin();
+  if (!adminId) return { error: "Accès réservé." };
 
   const users = await prisma.user.findMany({
-    where: { identityVerified: false, isVerified: false },
-    select: { id: true, name: true, email: true, role: true, createdAt: true, applicationFile: { select: { cinUrl: true, isComplete: true } } },
+    where: { role: { not: "ADMIN" } },
+    select: {
+      id: true, name: true, email: true, role: true,
+      createdAt: true, emailVerified: true, isVerified: true,
+    },
     orderBy: { createdAt: "desc" },
-    take: 50,
   });
   return { users };
 }
 
+export async function getUnverifiedUsers() {
+  return getAllUsers();
+}
+
 export async function approveUserIdentity(userId: string) {
   const adminId = await requireAdmin();
-  if (!adminId) return { error: "Accès réservé aux administrateurs." };
-
+  if (!adminId) return { error: "Accès réservé." };
   await prisma.user.update({
     where: { id: userId },
-    data: { identityVerified: true, isVerified: true },
+    data: { emailVerified: new Date(), identityVerified: true, isVerified: true },
   });
+  revalidatePath("/admin");
+  return { success: true };
+}
+
+export async function deleteUser(userId: string) {
+  const adminId = await requireAdmin();
+  if (!adminId) return { error: "Accès réservé." };
+  await prisma.user.delete({ where: { id: userId } });
   revalidatePath("/admin");
   return { success: true };
 }

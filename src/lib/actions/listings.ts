@@ -7,7 +7,8 @@ import { revalidatePath } from "next/cache";
 
 const listingSchema = z.object({
   title: z.string().min(5, "Le titre doit comporter au moins 5 caractères"),
-  description: z.string().min(20, "La description doit comporter au moins 20 caractères"),
+  description: z.string().min(50, "La description doit comporter au moins 50 caractères"),
+  mapsLink: z.string().url("Le lien Google Maps doit être une URL valide").min(1, "Le lien Google Maps est obligatoire"),
   type: z.enum(["ROOM", "STUDIO", "APARTMENT", "COLIVING", "HOMESTAY"]),
   listingType: z.enum(["COLOC", "SUBLEASE", "CESSION", "STANDARD"]).default("STANDARD"),
   city: z.string().min(2, "La ville est requise"),
@@ -48,6 +49,7 @@ export async function createListing(data: z.infer<typeof listingSchema>) {
         city: validatedData.city,
         neighborhood: validatedData.neighborhood,
         address: validatedData.address,
+        mapsLink: validatedData.mapsLink,
         price: validatedData.price,
         size: validatedData.size,
         bedrooms: validatedData.bedrooms,

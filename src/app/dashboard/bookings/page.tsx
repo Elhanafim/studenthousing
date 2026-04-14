@@ -8,7 +8,7 @@ import { MapPin, Building, Calendar, Clock, CheckCircle, XCircle } from "lucide-
 import { BookingStatus } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Mes demandes | StudentHome.ma" };
+export const metadata = { title: "Mes demandes | Bayt-Talib" };
 
 const STATUS_STYLES: Record<BookingStatus, { label: string; cls: string }> = {
   INQUIRY: { label: "Demande envoyée", cls: "bg-blue-100 text-blue-700" },

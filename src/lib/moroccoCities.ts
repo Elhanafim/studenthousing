@@ -89,4 +89,19 @@ export const POPULAR_STUDENT_CITIES = [
     image: "/cities/tanger.jpg",
     universities: ["Abdelmalek Essaadi", "ENCG Tanger", "ENSA Tanger"],
   },
+  {
+    city: "Meknès",
+    image: "/cities/meknes.jpg",
+    universities: ["Université Moulay Ismail", "ENCG Meknès", "ENSA Meknès"],
+  },
+  {
+    city: "Oujda",
+    image: "/cities/oujda.jpg",
+    universities: ["Université Mohammed Premier", "ENCG Oujda", "ENSA Oujda"],
+  },
+  {
+    city: "Errachidia",
+    image: "/cities/errachidia.jpg",
+    universities: ["Université Moulay Ali Cherif", "ENSA Errachidia"],
+  },
 ] as const;

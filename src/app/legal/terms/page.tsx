@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Conditions générales d'utilisation",
-  description: "Conditions générales d'utilisation de la plateforme StudentHome.ma.",
+  description: "Conditions générales d'utilisation de la plateforme Bayt-Talib.",
 };
 
 export default function TermsPage() {
@@ -14,7 +14,7 @@ export default function TermsPage() {
       <div className="space-y-8 text-gray-700 text-sm leading-relaxed">
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-3">1. Objet</h2>
-          <p>Les présentes Conditions Générales d&apos;Utilisation régissent l&apos;accès et l&apos;utilisation de la plateforme StudentHome.ma, service gratuit de mise en relation entre étudiants chercheurs de logement et propriétaires ou étudiants-hôtes au Maroc.</p>
+          <p>Les présentes Conditions Générales d&apos;Utilisation régissent l&apos;accès et l&apos;utilisation de la plateforme Bayt-Talib, service gratuit de mise en relation entre étudiants chercheurs de logement et propriétaires ou étudiants-hôtes au Maroc.</p>
         </section>
 
         <section>
@@ -24,12 +24,12 @@ export default function TermsPage() {
 
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-3">3. Service gratuit</h2>
-          <p>StudentHome.ma est entièrement gratuit pour les étudiants et les hôtes. La plateforme ne perçoit aucune commission sur les transactions. Aucun frais n&apos;est facturé pour la publication d&apos;annonces.</p>
+          <p>Bayt-Talib est entièrement gratuit pour les étudiants et les hôtes. La plateforme ne perçoit aucune commission sur les transactions. Aucun frais n&apos;est facturé pour la publication d&apos;annonces.</p>
         </section>
 
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-3">4. Obligations des utilisateurs</h2>
-          <p>En utilisant StudentHome.ma, vous vous engagez à :</p>
+          <p>En utilisant Bayt-Talib, vous vous engagez à :</p>
           <ul className="list-disc ml-5 mt-2 space-y-1">
             <li>Fournir des informations exactes et à jour</li>
             <li>Ne pas publier de contenu illicite, trompeur ou offensant</li>
@@ -41,12 +41,12 @@ export default function TermsPage() {
 
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-3">5. Annonces et contenu</h2>
-          <p>Les annonces publiées doivent correspondre à des logements réels et disponibles. StudentHome.ma se réserve le droit de supprimer toute annonce ne respectant pas ces conditions. La plateforme n&apos;est pas partie aux contrats de location conclus entre les utilisateurs.</p>
+          <p>Les annonces publiées doivent correspondre à des logements réels et disponibles. Bayt-Talib se réserve le droit de supprimer toute annonce ne respectant pas ces conditions. La plateforme n&apos;est pas partie aux contrats de location conclus entre les utilisateurs.</p>
         </section>
 
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-3">6. Responsabilité</h2>
-          <p>StudentHome.ma met à disposition un outil de mise en relation. Nous ne pouvons être tenus responsables des transactions, accords ou litiges entre utilisateurs. Les descriptions des logements sont sous la responsabilité exclusive des hôtes.</p>
+          <p>Bayt-Talib met à disposition un outil de mise en relation. Nous ne pouvons être tenus responsables des transactions, accords ou litiges entre utilisateurs. Les descriptions des logements sont sous la responsabilité exclusive des hôtes.</p>
         </section>
 
         <section>
@@ -56,7 +56,7 @@ export default function TermsPage() {
 
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-3">8. Modification des CGU</h2>
-          <p>StudentHome.ma peut modifier les présentes conditions à tout moment. Les utilisateurs seront notifiés par email des modifications importantes. L&apos;utilisation continue de la plateforme vaut acceptation des nouvelles conditions.</p>
+          <p>Bayt-Talib peut modifier les présentes conditions à tout moment. Les utilisateurs seront notifiés par email des modifications importantes. L&apos;utilisation continue de la plateforme vaut acceptation des nouvelles conditions.</p>
         </section>
 
         <section>

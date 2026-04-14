@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Loader2 } from "lucide-react";
+import { Send, Loader2, CalendarCheck, Video } from "lucide-react";
 import { sendMessage } from "@/lib/actions/messages";
 import { useRouter } from "next/navigation";
 
@@ -38,11 +38,12 @@ export default function MessageThread({
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  async function handleSend() {
-    if (!content.trim()) return;
+  async function handleSend(text?: string) {
+    const msg = text ?? content.trim();
+    if (!msg) return;
     setLoading(true);
     setError("");
-    const result = await sendMessage({ content: content.trim(), receiverId, listingId });
+    const result = await sendMessage({ content: msg, receiverId, listingId });
     setLoading(false);
     if (result.error) {
       setError(result.error);
@@ -52,15 +53,46 @@ export default function MessageThread({
     }
   }
 
+  function sendVisitRequest(type: "personne" | "virtuelle") {
+    const text =
+      type === "personne"
+        ? "📅 Je souhaite faire une visite en personne de votre logement. Seriez-vous disponible prochainement ? Merci de me proposer un créneau."
+        : "💻 Je souhaite faire une visite virtuelle (vidéo) de votre logement. Seriez-vous disponible pour un appel vidéo ? Merci de me proposer un créneau.";
+    handleSend(text);
+  }
+
   return (
     <div className="flex flex-col h-full min-h-[400px]">
       {/* Thread header */}
       {partnerName && (
-        <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
-          <div className="w-9 h-9 bg-accent rounded-full flex items-center justify-center text-white font-black text-sm shrink-0">
-            {partnerName.charAt(0).toUpperCase()}
+        <div className="px-6 py-4 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center gap-3">
+          <div className="flex items-center gap-3 flex-1">
+            <div className="w-9 h-9 bg-accent rounded-full flex items-center justify-center text-white font-black text-sm shrink-0">
+              {partnerName.charAt(0).toUpperCase()}
+            </div>
+            <span className="font-bold text-primary">{partnerName}</span>
           </div>
-          <span className="font-bold text-primary">{partnerName}</span>
+          {/* Visit request buttons */}
+          <div className="flex gap-2 flex-wrap">
+            <button
+              type="button"
+              onClick={() => sendVisitRequest("personne")}
+              disabled={loading}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-brand-50 text-brand-700 hover:bg-brand-100 transition-colors disabled:opacity-50 border border-brand-200"
+            >
+              <CalendarCheck className="w-3.5 h-3.5" />
+              Visite en personne
+            </button>
+            <button
+              type="button"
+              onClick={() => sendVisitRequest("virtuelle")}
+              disabled={loading}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-accent-50 text-accent-700 hover:bg-accent-100 transition-colors disabled:opacity-50 border border-accent-200"
+            >
+              <Video className="w-3.5 h-3.5" />
+              Visite virtuelle
+            </button>
+          </div>
         </div>
       )}
 
@@ -108,7 +140,7 @@ export default function MessageThread({
           className="flex-1 px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-sm outline-none focus:ring-2 focus:ring-accent/20 font-medium"
         />
         <button
-          onClick={handleSend}
+          onClick={() => handleSend()}
           disabled={loading || !content.trim()}
           className="clay-gradient text-white w-12 h-12 rounded-2xl flex items-center justify-center shadow hover:shadow-lg transition-all disabled:opacity-50"
         >

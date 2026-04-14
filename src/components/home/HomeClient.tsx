@@ -11,8 +11,6 @@ import {
   ShieldCheck,
   CheckCircle,
   ArrowRight,
-  Star,
-  FileText,
   MessageSquare,
   UserCheck,
   Home,
@@ -176,8 +174,8 @@ export default function HomeClient({ listings }: { listings: any[] }) {
               <ul className="space-y-2.5 mb-6">
                 {[
                   "Annonces vérifiées par notre équipe",
-                  "Dossier de location en ligne, une seule fois",
                   "Messagerie directe avec le propriétaire",
+                  "Demande de visite en ligne incluse",
                 ].map((b) => (
                   <li key={b} className="flex items-start gap-2.5 text-sm text-gray-700">
                     <CheckCircle className="w-4 h-4 text-accent-600 mt-0.5 shrink-0" aria-hidden="true" />
@@ -277,11 +275,7 @@ export default function HomeClient({ listings }: { listings: any[] }) {
                         <span className="text-lg font-semibold text-gray-900">{listing.price.toLocaleString()} MAD</span>
                         <span className="text-gray-500 text-xs ml-1">/mois</span>
                       </div>
-                      <div className="flex items-center gap-1 text-xs text-gray-500">
-                        <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" aria-hidden="true" />
-                        4.8
                       </div>
-                    </div>
                   </div>
                 </Link>
               ))}
@@ -327,21 +321,20 @@ export default function HomeClient({ listings }: { listings: any[] }) {
       </section>
 
       {/* ══════════════════════════════════════════════
-          HOW IT WORKS
+          HOW IT WORKS — STUDENTS
       ══════════════════════════════════════════════ */}
       <section className="py-16 bg-white border-t border-gray-100">
         <div className="max-w-5xl mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="font-display text-3xl font-bold text-primary mb-2">Comment ça marche ?</h2>
-            <p className="text-muted text-sm">Du premier clic à l'emménagement en 4 étapes.</p>
+            <p className="text-muted text-sm">Pour les étudiants — du premier clic à l'emménagement en 3 étapes.</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
             {[
-              { step: "01", icon: Search,      title: "Cherchez",             desc: "Filtrez par ville, type et budget parmi des annonces vérifiées." },
-              { step: "02", icon: FileText,     title: "Créez votre dossier",  desc: "Complétez votre dossier de location en ligne une seule fois." },
-              { step: "03", icon: MessageSquare, title: "Contactez l'hôte",   desc: "Échangez directement et réservez une visite en ligne." },
-              { step: "04", icon: ShieldCheck,  title: "Emménagez !",         desc: "Signez votre bail et installez-vous en toute sérénité." },
+              { step: "01", icon: Search,        title: "Cherchez",          desc: "Filtrez par ville, type et budget parmi des annonces vérifiées." },
+              { step: "02", icon: MessageSquare, title: "Contactez l'hôte",  desc: "Échangez directement et réservez une visite en ligne." },
+              { step: "03", icon: ShieldCheck,   title: "Emménagez !",       desc: "Installez-vous dans votre nouveau logement en toute sérénité." },
             ].map(({ step, icon: Icon, title, desc }) => (
               <div key={step} className="text-center">
                 <div className="w-12 h-12 brand-gradient rounded-xl flex items-center justify-center text-white mx-auto mb-4">
@@ -352,6 +345,44 @@ export default function HomeClient({ listings }: { listings: any[] }) {
                 <p className="text-gray-600 text-xs leading-relaxed">{desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════
+          HOW IT WORKS — HOSTS
+      ══════════════════════════════════════════════ */}
+      <section className="py-16 bg-surface border-t border-brand-100/40">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="font-display text-3xl font-bold text-primary mb-2">Vous êtes propriétaire ou hôte ?</h2>
+            <p className="text-muted text-sm">Publiez votre annonce en 3 étapes simples — 100% gratuit.</p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
+            {[
+              { step: "01", icon: Home,          title: "Créez votre annonce",  desc: "Décrivez votre logement, ajoutez des photos et fixez votre loyer." },
+              { step: "02", icon: BadgeCheck,    title: "Vérification",         desc: "Notre équipe vérifie et valide votre annonce rapidement." },
+              { step: "03", icon: Users,         title: "Recevez des étudiants", desc: "Les étudiants vous contactent directement via la messagerie." },
+            ].map(({ step, icon: Icon, title, desc }) => (
+              <div key={step} className="text-center">
+                <div className="w-12 h-12 bg-accent-100 rounded-xl flex items-center justify-center text-accent-600 mx-auto mb-4">
+                  <Icon className="w-5 h-5" aria-hidden="true" />
+                </div>
+                <div className="text-[10px] font-bold text-accent-600 uppercase tracking-widest mb-1">{step}</div>
+                <h3 className="font-semibold text-gray-900 text-sm mb-1.5">{title}</h3>
+                <p className="text-gray-600 text-xs leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <Link
+              href="/publish"
+              className="inline-flex items-center gap-2 px-8 py-3.5 bg-accent-600 text-white text-sm font-semibold rounded-xl hover:bg-accent-700 transition-colors hover:shadow-md"
+            >
+              Ajouter votre annonce <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
         </div>
       </section>

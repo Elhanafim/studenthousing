@@ -1,9 +1,8 @@
 import Link from "next/link";
-import { Building } from "lucide-react";
 import SignInForm from "@/components/auth/SignInForm";
 
 export const metadata = {
-  title: "Se connecter | StudentHome.ma",
+  title: "Se connecter | Bayt-Talib",
 };
 
 export default function SignInPage() {
@@ -12,13 +11,10 @@ export default function SignInPage() {
       {/* Header */}
       <div className="max-w-7xl mx-auto w-full mb-12 flex flex-col items-center">
         <Link href="/" className="flex flex-col items-center gap-4">
-          <div className="w-16 h-16 bg-accent rounded-2xl flex items-center justify-center shadow-2xl">
-            <Building className="text-white w-10 h-10" />
-          </div>
-          <h1 className="text-4xl font-black text-primary tracking-tight">StudentHome.ma</h1>
+          <h1 className="font-display text-4xl font-bold text-primary tracking-tight">Bayt-Talib</h1>
         </Link>
         <p className="text-gray-400 font-light mt-2 italic text-sm">
-          Safe &amp; Modern Housing for Moroccan Students
+          Logement étudiant au Maroc
         </p>
       </div>
 

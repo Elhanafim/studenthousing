@@ -6,7 +6,7 @@ import { MessageSquare } from "lucide-react";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Messages | StudentHome.ma" };
+export const metadata = { title: "Messages | Bayt-Talib" };
 
 export default async function MessagesPage({
   searchParams,

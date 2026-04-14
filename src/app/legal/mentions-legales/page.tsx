@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Mentions légales",
-  description: "Mentions légales de StudentHome.ma conformément au droit marocain.",
+  description: "Mentions légales de Bayt-Talib conformément au droit marocain.",
 };
 
 export default function MentionsLegalesPage() {
@@ -15,18 +15,16 @@ export default function MentionsLegalesPage() {
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-3">Éditeur du site</h2>
           <ul className="space-y-1">
-            <li><strong>Nom de la société :</strong> StudentHome.ma SARL</li>
-            <li><strong>Siège social :</strong> Casablanca, Maroc</li>
-            <li><strong>Email :</strong> <a href="mailto:legal@studenthome.ma" className="text-brand-600 hover:underline">legal@studenthome.ma</a></li>
-            <li><strong>Téléphone :</strong> +212 522 00 00 00</li>
-            <li><strong>Registre de commerce :</strong> RC Casablanca — à compléter</li>
-            <li><strong>Identifiant fiscal :</strong> IF — à compléter</li>
+            <li><strong>Propriétaire :</strong> EL HANAFI MOHAMMED</li>
+            <li><strong>Téléphone :</strong> <a href="tel:+212677456422" className="text-brand-600 hover:underline">+212 677456422</a></li>
+            <li><strong>Email :</strong> <a href="mailto:mohamed345gmail.com" className="text-brand-600 hover:underline">mohamed345gmail.com</a></li>
+            <li><strong>Siège social :</strong> Maroc</li>
           </ul>
         </section>
 
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-3">Directeur de la publication</h2>
-          <p>Le Directeur Général de StudentHome.ma SARL.</p>
+          <p>EL HANAFI MOHAMMED</p>
         </section>
 
         <section>
@@ -40,7 +38,7 @@ export default function MentionsLegalesPage() {
 
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-3">Propriété intellectuelle</h2>
-          <p>L&apos;ensemble du contenu de StudentHome.ma (textes, images, logo, charte graphique, code source) est protégé par le droit d&apos;auteur marocain. Toute reproduction, totale ou partielle, sans autorisation préalable est strictement interdite.</p>
+          <p>L&apos;ensemble du contenu de Bayt-Talib (textes, images, logo, charte graphique, code source) est protégé par le droit d&apos;auteur marocain. Toute reproduction, totale ou partielle, sans autorisation préalable est strictement interdite.</p>
         </section>
 
         <section>
@@ -53,12 +51,12 @@ export default function MentionsLegalesPage() {
 
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-3">Limitation de responsabilité</h2>
-          <p>StudentHome.ma est une plateforme de mise en relation. Elle ne saurait être tenue responsable des contenus publiés par les utilisateurs, ni des accords conclus entre parties. Toute transaction est sous la responsabilité exclusive des parties concernées.</p>
+          <p>Bayt-Talib est une plateforme de mise en relation. Elle ne saurait être tenue responsable des contenus publiés par les utilisateurs, ni des accords conclus entre parties. Toute transaction est sous la responsabilité exclusive des parties concernées.</p>
         </section>
 
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-3">Liens hypertextes</h2>
-          <p>Le site peut contenir des liens vers des sites tiers. StudentHome.ma n&apos;est pas responsable du contenu de ces sites et ne peut être tenu pour responsable des dommages résultant de leur utilisation.</p>
+          <p>Le site peut contenir des liens vers des sites tiers. Bayt-Talib n&apos;est pas responsable du contenu de ces sites et ne peut être tenu pour responsable des dommages résultant de leur utilisation.</p>
         </section>
 
         <section>

@@ -9,7 +9,7 @@ import { CardSkeleton } from "@/components/shared/LoadingSkeleton";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = { title: "Rechercher un logement | StudentHome.ma" };
+export const metadata = { title: "Rechercher un logement | Bayt-Talib" };
 
 const TYPE_LABELS: Record<string, string> = {
   ROOM: "Chambre",

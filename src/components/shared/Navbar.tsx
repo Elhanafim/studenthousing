@@ -11,12 +11,10 @@ import {
   Info,
   Menu,
   X,
-  Building2,
   LayoutDashboard,
   MessageSquare,
   ChevronDown,
   LogOut,
-  User,
 } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 
@@ -65,14 +63,11 @@ export default function Navbar() {
             {/* ── Logo ── */}
             <Link
               href="/"
-              className="flex items-center gap-2 shrink-0 group"
-              aria-label="StudentHome.ma — Accueil"
+              className="flex items-center shrink-0 group"
+              aria-label="Bayt-Talib — Accueil"
             >
-              <div className="w-8 h-8 brand-gradient rounded-lg flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
-                <Building2 className="text-white w-4 h-4" />
-              </div>
-              <span className="text-[15px] font-semibold tracking-tight text-gray-900">
-                StudentHome<span className="text-brand-600">.ma</span>
+              <span className="font-display text-xl font-bold tracking-tight text-gray-900 group-hover:text-brand-600 transition-colors">
+                Bayt-Talib
               </span>
             </Link>
 

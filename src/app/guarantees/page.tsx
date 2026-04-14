@@ -11,7 +11,7 @@ import {
   MessageSquare,
 } from "lucide-react";
 
-export const metadata = { title: "Nos garanties | StudentHome.ma" };
+export const metadata = { title: "Nos garanties | Bayt-Talib" };
 
 const PILLARS = [
   {
@@ -91,7 +91,7 @@ export default function GuaranteesPage() {
             Votre sécurité,<br /><span className="text-accent">notre priorité</span>
           </h1>
           <p className="text-white/70 font-light text-lg max-w-xl mx-auto">
-            StudentHome.ma s&apos;engage à offrir un environnement sûr et fiable pour les étudiants et les propriétaires marocains.
+            Bayt-Talib s&apos;engage à offrir un environnement sûr et fiable pour les étudiants et les propriétaires marocains.
           </p>
         </div>
       </section>
@@ -160,7 +160,7 @@ export default function GuaranteesPage() {
       <section className="max-w-4xl mx-auto px-4 py-20 text-center">
         <h2 className="text-3xl font-black text-primary mb-4">Prêt à trouver votre logement en toute confiance ?</h2>
         <p className="text-gray-400 font-light mb-8 max-w-lg mx-auto">
-          Rejoignez des milliers d&apos;étudiants qui trouvent leur logement idéal au Maroc grâce à StudentHome.ma.
+          Rejoignez des milliers d&apos;étudiants qui trouvent leur logement idéal au Maroc grâce à Bayt-Talib.
         </p>
         <div className="flex flex-col md:flex-row gap-4 justify-center">
           <Link href="/search" className="clay-gradient text-white px-10 py-4 rounded-2xl font-black text-base shadow-xl hover:scale-105 transition-all">

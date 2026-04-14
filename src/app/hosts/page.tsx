@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ShieldCheck, TrendingUp, Users, Star, CheckCircle, Building, MessageSquare, BarChart3 } from "lucide-react";
 
-export const metadata = { title: "Propriétaires | StudentHome.ma" };
+export const metadata = { title: "Propriétaires | Bayt-Talib" };
 
 const STEPS = [
   { n: "01", title: "Créez votre compte", desc: "Inscription gratuite en 2 minutes. Choisissez le rôle « Propriétaire »." },
@@ -20,7 +20,7 @@ const BENEFITS = [
 ];
 
 const FAQS = [
-  { q: "Combien coûte la mise en ligne d'une annonce ?", r: "La publication est entièrement gratuite. StudentHome.ma est une plateforme sans commission pour les propriétaires." },
+  { q: "Combien coûte la mise en ligne d'une annonce ?", r: "La publication est entièrement gratuite. Bayt-Talib est une plateforme sans commission pour les propriétaires." },
   { q: "Comment se passe la vérification de mon annonce ?", r: "Notre équipe examine chaque annonce sous 24 à 48 h pour valider les informations et attribuer le badge « Vérifié »." },
   { q: "Puis-je publier plusieurs annonces ?", r: "Oui, il n'y a aucune limite. Gérez toutes vos propriétés depuis un seul tableau de bord." },
   { q: "Comment suis-je notifié d'une nouvelle candidature ?", r: "Vous recevez un message dans votre boîte de messagerie dès qu'un étudiant envoie une demande." },
@@ -63,7 +63,7 @@ export default function HostsPage() {
       {/* Benefits */}
       <section className="max-w-6xl mx-auto px-4 py-24">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-black text-primary mb-4">Pourquoi choisir StudentHome.ma ?</h2>
+          <h2 className="text-4xl font-black text-primary mb-4">Pourquoi choisir Bayt-Talib ?</h2>
           <p className="text-gray-400 font-light text-lg max-w-xl mx-auto">Une plateforme pensée pour simplifier la relation propriétaire-étudiant.</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -103,7 +103,7 @@ export default function HostsPage() {
         <div className="bg-primary rounded-[3rem] p-12 text-center text-white">
           <h2 className="text-4xl font-black mb-4">Rejoignez des centaines de propriétaires</h2>
           <p className="text-white/70 font-light text-lg mb-8 max-w-xl mx-auto">
-            Des propriétaires à Casablanca, Rabat, Fès et partout au Maroc font confiance à StudentHome.ma pour trouver leurs locataires.
+            Des propriétaires à Casablanca, Rabat, Fès et partout au Maroc font confiance à Bayt-Talib pour trouver leurs locataires.
           </p>
           <div className="flex justify-center gap-12 mb-10 flex-wrap">
             {[

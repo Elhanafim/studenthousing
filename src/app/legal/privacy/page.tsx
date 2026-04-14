@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Politique de confidentialité",
-  description: "Politique de confidentialité de StudentHome.ma — comment nous collectons et protégeons vos données.",
+  description: "Politique de confidentialité de Bayt-Talib — comment nous collectons et protégeons vos données.",
 };
 
 export default function PrivacyPage() {
@@ -15,7 +15,7 @@ export default function PrivacyPage() {
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-3">1. Responsable du traitement</h2>
           <p>
-            StudentHome.ma, plateforme opérée depuis Casablanca, Maroc, est responsable du traitement des données
+            Bayt-Talib, plateforme opérée depuis Casablanca, Maroc, est responsable du traitement des données
             personnelles collectées via ce site. Contact : <a href="mailto:privacy@studenthome.ma" className="text-brand-600 hover:underline">privacy@studenthome.ma</a>
           </p>
         </section>
@@ -46,7 +46,7 @@ export default function PrivacyPage() {
 
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-3">4. Base légale</h2>
-          <p>Le traitement est fondé sur votre consentement explicite lors de l&apos;inscription, ou sur l&apos;exécution du contrat de service entre vous et StudentHome.ma.</p>
+          <p>Le traitement est fondé sur votre consentement explicite lors de l&apos;inscription, ou sur l&apos;exécution du contrat de service entre vous et Bayt-Talib.</p>
         </section>
 
         <section>

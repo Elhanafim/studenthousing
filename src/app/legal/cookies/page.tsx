@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Politique de cookies",
-  description: "Politique de cookies de StudentHome.ma — quels cookies nous utilisons et pourquoi.",
+  description: "Politique de cookies de Bayt-Talib — quels cookies nous utilisons et pourquoi.",
 };
 
 export default function CookiesPage() {

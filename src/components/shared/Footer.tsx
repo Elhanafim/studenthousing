@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Building2, Mail, Phone, MapPin, Gift } from "lucide-react";
+import { Mail, Phone, MapPin, Gift } from "lucide-react";
 
 const PLATFORM_LINKS = [
   { href: "/search",       label: "Rechercher un logement" },
@@ -25,12 +25,9 @@ export default function Footer() {
 
           {/* Col 1 — Brand */}
           <div>
-            <Link href="/" className="flex items-center gap-2 mb-4" aria-label="StudentHome.ma — Accueil">
-              <div className="w-8 h-8 brand-gradient rounded-lg flex items-center justify-center shadow-sm">
-                <Building2 className="text-white w-4 h-4" aria-hidden="true" />
-              </div>
-              <span className="text-[15px] font-semibold tracking-tight text-gray-900">
-                StudentHome<span className="text-brand-600">.ma</span>
+            <Link href="/" className="flex items-center mb-4" aria-label="Bayt-Talib — Accueil">
+              <span className="font-display text-xl font-bold tracking-tight text-gray-900">
+                Bayt-Talib
               </span>
             </Link>
             <p className="text-gray-600 text-sm leading-relaxed mb-4">
@@ -72,23 +69,24 @@ export default function Footer() {
 
           {/* Col 4 — Contact */}
           <div>
-            <h3 className="text-xs font-bold text-gray-900 uppercase tracking-widest mb-4">Contact</h3>
+            <h3 className="text-xs font-bold text-gray-900 uppercase tracking-widest mb-4">Support & Contact</h3>
+            <p className="text-sm font-semibold text-gray-700 mb-3">SEDDIK HAJJIMI</p>
             <ul className="space-y-3">
               <li className="flex items-start gap-2 text-sm text-gray-600">
                 <Mail className="w-4 h-4 text-gray-400 mt-0.5 shrink-0" aria-hidden="true" />
-                <a href="mailto:support@studenthome.ma" className="hover:text-brand-600 transition-colors">
-                  support@studenthome.ma
+                <a href="mailto:sehajjimi@gmail.com" className="hover:text-brand-600 transition-colors">
+                  sehajjimi@gmail.com
                 </a>
               </li>
               <li className="flex items-start gap-2 text-sm text-gray-600">
                 <Phone className="w-4 h-4 text-gray-400 mt-0.5 shrink-0" aria-hidden="true" />
-                <a href="tel:+212522000000" className="hover:text-brand-600 transition-colors">
-                  +212 522 00 00 00
+                <a href="tel:+212694488595" className="hover:text-brand-600 transition-colors">
+                  +212 694-488595
                 </a>
               </li>
               <li className="flex items-start gap-2 text-sm text-gray-600">
                 <MapPin className="w-4 h-4 text-gray-400 mt-0.5 shrink-0" aria-hidden="true" />
-                <span>Casablanca, Maroc</span>
+                <span>Maroc</span>
               </li>
               <li className="text-xs text-gray-400 pl-6">Lun–Sam, 9h–19h</li>
             </ul>
@@ -100,7 +98,7 @@ export default function Footer() {
       <div className="border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-xs text-gray-500">
-            © 2026 StudentHome.ma — Tous droits réservés
+            © 2026 Bayt-Talib — Tous droits réservés
           </p>
           <p className="text-xs text-gray-400">
             Conforme WCAG AA · Données protégées au Maroc

@@ -4,7 +4,7 @@ import { ShieldCheck } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Charte des hôtes étudiants",
-  description: "Règles et engagements des hôtes étudiants sur StudentHome.ma.",
+  description: "Règles et engagements des hôtes étudiants sur Bayt-Talib.",
 };
 
 export default function CharteHotesPage() {
@@ -16,7 +16,7 @@ export default function CharteHotesPage() {
       <div className="bg-brand-50 rounded-2xl p-6 flex gap-4 mb-10 border border-brand-100">
         <ShieldCheck className="w-6 h-6 text-brand-600 shrink-0 mt-0.5" aria-hidden="true" />
         <p className="text-sm text-gray-700">
-          En tant qu&apos;hôte sur StudentHome.ma, vous vous engagez à respecter cette charte. Elle garantit un environnement sûr et de confiance pour l&apos;ensemble de la communauté étudiante.
+          En tant qu&apos;hôte sur Bayt-Talib, vous vous engagez à respecter cette charte. Elle garantit un environnement sûr et de confiance pour l&apos;ensemble de la communauté étudiante.
         </p>
       </div>
 
@@ -56,7 +56,7 @@ export default function CharteHotesPage() {
 
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-3">5. Légalité de la sous-location</h2>
-          <p>Si vous êtes locataire et souhaitez sous-louer, vous devez avoir l&apos;accord écrit de votre propriétaire. StudentHome.ma se dégage de toute responsabilité en cas de sous-location non autorisée par le propriétaire principal.</p>
+          <p>Si vous êtes locataire et souhaitez sous-louer, vous devez avoir l&apos;accord écrit de votre propriétaire. Bayt-Talib se dégage de toute responsabilité en cas de sous-location non autorisée par le propriétaire principal.</p>
         </section>
 
         <section>
@@ -64,7 +64,7 @@ export default function CharteHotesPage() {
           <ul className="list-disc ml-5 space-y-1">
             <li>Le loyer affiché doit correspondre au loyer réellement demandé</li>
             <li>Aucun frais d&apos;agence ni de dossier ne peut être réclamé au candidat</li>
-            <li>StudentHome.ma ne gère pas les transactions financières — les paiements se font directement entre les parties</li>
+            <li>Bayt-Talib ne gère pas les transactions financières — les paiements se font directement entre les parties</li>
           </ul>
         </section>
 
@@ -77,7 +77,7 @@ export default function CharteHotesPage() {
           <h2 className="text-lg font-semibold text-gray-900 mb-3">8. Signalement</h2>
           <p>
             Tout utilisateur peut signaler un hôte qui ne respecte pas cette charte via le bouton &quot;Signaler&quot; sur l&apos;annonce concernée, ou en contactant notre équipe à{" "}
-            <a href="mailto:support@studenthome.ma" className="text-brand-600 hover:underline">support@studenthome.ma</a>.
+            <a href="mailto:sehajjimi@gmail.com" className="text-brand-600 hover:underline">sehajjimi@gmail.com</a>.
           </p>
         </section>
       </div>

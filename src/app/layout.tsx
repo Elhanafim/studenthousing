@@ -20,15 +20,15 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | StudentHome.ma",
-    default: "StudentHome.ma — Logement étudiant au Maroc",
+    template: "%s | Bayt-Talib",
+    default: "Bayt-Talib — Logement étudiant au Maroc",
   },
   description:
     "La première plateforme gratuite de logement étudiant au Maroc. Annonces vérifiées dans les grandes villes universitaires : Casablanca, Rabat, Fès, Marrakech.",
   keywords: ["logement étudiant", "maroc", "colocation", "studio", "casablanca", "rabat"],
   metadataBase: new URL("https://student-housing-morocco.vercel.app"),
   openGraph: {
-    siteName: "StudentHome.ma",
+    siteName: "Bayt-Talib",
     type: "website",
     locale: "fr_MA",
   },

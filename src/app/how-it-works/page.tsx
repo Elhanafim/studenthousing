@@ -7,7 +7,7 @@ import {
 
 export const metadata: Metadata = {
   title: "Comment ça marche",
-  description: "Découvrez comment StudentHome.ma fonctionne pour trouver ou publier un logement étudiant au Maroc.",
+  description: "Découvrez comment Bayt-Talib fonctionne pour trouver ou publier un logement étudiant au Maroc.",
 };
 
 const STUDENT_STEPS = [
@@ -32,7 +32,7 @@ export default function HowItWorksPage() {
         <div className="max-w-2xl mx-auto px-4">
           <h1 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-3">Comment ça marche ?</h1>
           <p className="text-gray-600 leading-relaxed">
-            StudentHome.ma est conçu pour être simple, rapide et sécurisé — que vous cherchiez un logement
+            Bayt-Talib est conçu pour être simple, rapide et sécurisé — que vous cherchiez un logement
             ou que vous souhaitiez en partager un.
           </p>
         </div>
@@ -119,11 +119,11 @@ export default function HowItWorksPage() {
           <h2 className="text-2xl font-semibold text-gray-900 mb-8 text-center">Questions fréquentes</h2>
           <div className="space-y-4">
             {[
-              { q: "Est-ce vraiment gratuit ?", a: "Oui, totalement. Aucun frais d'inscription, aucune commission sur les transactions, aucun abonnement. StudentHome.ma est 100% gratuit pour les étudiants et les hôtes." },
+              { q: "Est-ce vraiment gratuit ?", a: "Oui, totalement. Aucun frais d'inscription, aucune commission sur les transactions, aucun abonnement. Bayt-Talib est 100% gratuit pour les étudiants et les hôtes." },
               { q: "Comment les annonces sont-elles vérifiées ?", a: "Notre équipe vérifie chaque annonce manuellement avant publication. Nous contactons l'hôte pour confirmer l'adresse, les photos et les informations fournies." },
               { q: "Puis-je publier une annonce si je suis locataire ?", a: "Oui, à condition d'avoir l'accord écrit de votre propriétaire. Consultez notre charte des hôtes pour les conditions détaillées." },
               { q: "Comment réserver une visite ?", a: "Depuis la page de l'annonce, consultez les créneaux disponibles proposés par l'hôte et réservez directement en un clic. Vous recevez une confirmation et un fichier .ics pour ajouter la visite à votre calendrier." },
-              { q: "StudentHome.ma gère-t-il les paiements ?", a: "Non. Les transactions financières se font directement entre le locataire et l'hôte. Nous facilitons la mise en relation mais ne gérons aucun paiement." },
+              { q: "Bayt-Talib gère-t-il les paiements ?", a: "Non. Les transactions financières se font directement entre le locataire et l'hôte. Nous facilitons la mise en relation mais ne gérons aucun paiement." },
             ].map(({ q, a }) => (
               <details key={q} className="group bg-surface rounded-xl ring-1 ring-gray-200 p-5">
                 <summary className="font-semibold text-gray-900 text-sm cursor-pointer list-none flex items-center justify-between">

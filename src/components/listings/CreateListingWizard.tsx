@@ -40,6 +40,7 @@ export default function CreateListingWizard() {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
+    mapsLink: "",
     type: "ROOM" as HousingTypeId,
     city: "Casablanca",
     neighborhood: "",
@@ -85,6 +86,18 @@ export default function CreateListingWizard() {
   const handleSubmit = async () => {
     setLoading(true);
     setError("");
+
+    if (!formData.mapsLink.trim()) {
+      setError("Le lien Google Maps de votre logement est obligatoire.");
+      setLoading(false);
+      return;
+    }
+    if (formData.description.trim().length < 50) {
+      setError("La description doit comporter au moins 50 caractères.");
+      setLoading(false);
+      return;
+    }
+
     const payload = {
       ...formData,
       listingType: "STANDARD" as const,
@@ -144,8 +157,44 @@ export default function CreateListingWizard() {
                 </div>
 
                 <div className="col-span-1 md:col-span-2 space-y-2">
-                  <label className={labelCls}>Description (20 caractères min.)</label>
-                  <textarea name="description" value={formData.description} onChange={handleInputChange} rows={4} placeholder="Décrivez votre logement : ambiance, atouts, proximité des universités..." className={`${inputCls} resize-none`} />
+                  <label className={labelCls}>
+                    Description <span className="text-red-500">*</span>{" "}
+                    <span className="text-gray-400 normal-case font-normal">(50 caractères minimum)</span>
+                  </label>
+                  <textarea
+                    name="description"
+                    value={formData.description}
+                    onChange={handleInputChange}
+                    rows={4}
+                    required
+                    minLength={50}
+                    placeholder="Décrivez votre logement : ambiance, atouts, proximité des universités... (minimum 50 caractères)"
+                    className={`${inputCls} resize-none`}
+                  />
+                  <p className={`text-xs ${formData.description.length < 50 ? "text-amber-600" : "text-accent-600"}`}>
+                    {formData.description.length}/50 caractères minimum
+                  </p>
+                  {formData.description.length > 0 && formData.description.length < 50 && (
+                    <p className="text-xs text-red-500">La description est trop courte.</p>
+                  )}
+                </div>
+
+                <div className="col-span-1 md:col-span-2 space-y-2">
+                  <label className={labelCls}>
+                    Lien Google Maps de votre logement <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="url"
+                    name="mapsLink"
+                    value={formData.mapsLink}
+                    onChange={handleInputChange}
+                    required
+                    placeholder="https://maps.google.com/..."
+                    className={inputCls}
+                  />
+                  {formData.mapsLink && !/^https?:\/\//.test(formData.mapsLink) && (
+                    <p className="text-xs text-red-500">Veuillez saisir une URL valide (commençant par http:// ou https://).</p>
+                  )}
                 </div>
 
                 <div className="col-span-1 md:col-span-2 space-y-2">

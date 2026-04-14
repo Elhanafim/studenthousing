@@ -30,6 +30,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           throw new Error("Mot de passe incorrect");
         }
 
+        // Block unverified users (admin can always sign in)
+        if (!user.emailVerified && user.role !== "ADMIN") {
+          throw new Error("EMAIL_NOT_VERIFIED");
+        }
+
         return {
           id: user.id,
           email: user.email,

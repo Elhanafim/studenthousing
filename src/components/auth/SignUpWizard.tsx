@@ -322,18 +322,22 @@ export default function SignUpWizard() {
             animate={{ opacity: 1, scale: 1 }}
             className="text-center py-8"
           >
-            <div className="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+            <div className="w-20 h-20 bg-blue-100 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="w-10 h-10" />
             </div>
-            <h2 className="text-3xl font-bold text-primary mb-2">Compte créé !</h2>
-            <p className="text-gray-500 mb-8">
-              Bienvenue sur StudentHome.ma. Vous pouvez maintenant vous connecter.
+            <h2 className="text-3xl font-bold text-primary mb-2">Vérifiez votre email !</h2>
+            <p className="text-gray-500 mb-4">
+              Un email de vérification a été envoyé à <strong>{formData.email}</strong>.
+              Cliquez sur le lien pour activer votre compte.
+            </p>
+            <p className="text-sm text-gray-400 mb-8">
+              Vérifiez votre dossier spam si vous ne le trouvez pas.
             </p>
             <button
               onClick={() => (window.location.href = "/auth/signin")}
               className="w-full py-4 rounded-2xl clay-gradient text-white font-bold"
             >
-              Se connecter
+              Aller à la connexion
             </button>
           </motion.div>
         )}

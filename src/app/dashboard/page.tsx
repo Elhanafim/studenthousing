@@ -5,10 +5,9 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   PlusCircle, MapPin, Building2, CheckCircle, Clock,
-  Search, Shield, FileText, MessageSquare, Calendar,
-  LayoutDashboard, Heart, BookOpen, Settings, BadgeCheck,
+  Search, MessageSquare, Calendar,
+  LayoutDashboard, Heart, BookOpen, Settings,
 } from "lucide-react";
-import { getDossierCompletionPercent } from "@/lib/utils/dossier";
 import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
@@ -36,7 +35,7 @@ export default async function DashboardPage() {
 
   const dbUser = await prisma.user.findUnique({
     where: { id: user.id },
-    select: { role: true, name: true, isVerified: true, university: true, applicationFile: true },
+    select: { role: true, name: true, isVerified: true, university: true },
   });
 
   const isHost = dbUser?.role === "HOST";
@@ -63,8 +62,6 @@ export default async function DashboardPage() {
     ? await prisma.bookingRequest.count({ where: { hostId: user.id, status: "PENDING_HOST_REVIEW" } })
     : 0;
 
-  const dossierPercent = getDossierCompletionPercent(dbUser?.applicationFile ?? null);
-
   const today = new Date().toLocaleDateString("fr-MA", {
     weekday: "long", day: "numeric", month: "long", year: "numeric",
   });
@@ -75,9 +72,8 @@ export default async function DashboardPage() {
     { href: "/dashboard/visits",       label: "Mes visites",        icon: Clock },
     { href: "/dashboard/listings",     label: "Mes annonces",       icon: Building2 },
     { href: "/dashboard/favorites",    label: "Mes favoris",        icon: Heart },
-    { href: "/dashboard/dossier",      label: "Mon dossier",        icon: FileText },
     { href: "/dashboard/messages",     label: "Messagerie",         icon: MessageSquare },
-    { href: "/dashboard/settings",     label: "Paramètres",         icon: Settings },
+    { href: "/dashboard/settings",     label: "Mon profil",         icon: Settings },
   ];
 
   return (
@@ -137,10 +133,9 @@ export default async function DashboardPage() {
                 { label: "Visites planifiées",   value: visitCount,                               icon: Calendar },
                 { label: "Messages non lus",     value: unreadMessages,                           icon: MessageSquare },
               ] : [
-                { label: "Candidatures",         value: tenantBookings.length,                    icon: BookOpen },
-                { label: "Visites planifiées",   value: visitCount,                               icon: Calendar },
-                { label: "Dossier complété",     value: `${dossierPercent}%`,                     icon: FileText },
-                { label: "Messages non lus",     value: unreadMessages,                           icon: MessageSquare },
+                { label: "Candidatures",         value: tenantBookings.length,  icon: BookOpen },
+                { label: "Visites planifiées",   value: visitCount,             icon: Calendar },
+                { label: "Messages non lus",     value: unreadMessages,         icon: MessageSquare },
               ];
               return (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -216,30 +211,6 @@ export default async function DashboardPage() {
             {/* ── STUDENT: bookings table ── */}
             {!isHost && (
               <>
-                {/* Dossier progress */}
-                {dossierPercent < 100 && (
-                  <Link href="/dashboard/dossier"
-                    className="block bg-white rounded-2xl ring-1 ring-gray-200 p-5 mb-6 hover:shadow-md transition-shadow">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <FileText className="w-4 h-4 text-brand-600" aria-hidden="true" />
-                        <span className="text-sm font-semibold text-gray-900">Mon dossier de location</span>
-                      </div>
-                      <span className="text-xs font-medium text-gray-500">{dossierPercent}%</span>
-                    </div>
-                    <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                      <div className={`h-full rounded-full transition-all ${
-                        dossierPercent >= 70 ? "bg-accent-600" : dossierPercent >= 40 ? "bg-amber-500" : "bg-brand-600"
-                      }`} style={{ width: `${dossierPercent}%` }} />
-                    </div>
-                    <p className="text-xs text-gray-500 mt-2">
-                      {dossierPercent < 70
-                        ? "Complétez votre dossier pour booster vos candidatures."
-                        : "Dossier en bonne voie — ajoutez les derniers documents."}
-                    </p>
-                  </Link>
-                )}
-
                 {/* Candidatures */}
                 <div className="bg-white rounded-2xl ring-1 ring-gray-200 overflow-hidden mb-6">
                   <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
@@ -315,9 +286,9 @@ export default async function DashboardPage() {
                 {/* Quick actions */}
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {[
-                    { href: "/search",            label: "Chercher un logement",   icon: Search,       color: "bg-brand-50 text-brand-600" },
-                    { href: "/dashboard/messages", label: "Messagerie",             icon: MessageSquare, color: "bg-gray-50 text-gray-600" },
-                    { href: "/dashboard/visits",  label: "Mes visites",            icon: Calendar,     color: "bg-amber-50 text-amber-600" },
+                    { href: "/search",              label: "Chercher un logement", icon: Search,        color: "bg-brand-50 text-brand-600" },
+                    { href: "/dashboard/messages",  label: "Messagerie",           icon: MessageSquare, color: "bg-gray-50 text-gray-600" },
+                    { href: "/dashboard/settings",  label: "Mon profil",           icon: Settings,      color: "bg-amber-50 text-amber-600" },
                   ].map(({ href, label, icon: Icon, color }) => (
                     <Link key={href} href={href}
                       className="bg-white rounded-xl ring-1 ring-gray-200 p-4 flex items-center gap-3 hover:shadow-md transition-shadow">

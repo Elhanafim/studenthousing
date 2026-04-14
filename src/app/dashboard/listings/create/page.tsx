@@ -10,7 +10,7 @@ export default function CreateListingPage() {
             <ArrowLeft className="w-4 h-4" /> Back to Dashboard
           </a>
           <h1 className="text-4xl font-black text-primary tracking-tight">Create New Listing</h1>
-          <p className="text-gray-500 font-light mt-2">Follow the steps to post your housing offer on StudentHome.ma</p>
+          <p className="text-gray-500 font-light mt-2">Follow the steps to post your housing offer on Bayt-Talib</p>
         </div>
       </div>
 

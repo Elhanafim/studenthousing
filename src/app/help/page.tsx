@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { HelpCircle, MessageSquare, Phone, Mail, ChevronDown, BookOpen, Shield, Home, FileText, CreditCard, AlertCircle } from "lucide-react";
 
-export const metadata = { title: "Centre d'aide | StudentHome.ma" };
+export const metadata = { title: "Centre d'aide | Bayt-Talib" };
 
 const CATEGORIES = [
   {
@@ -30,7 +30,7 @@ const CATEGORIES = [
     faqs: [
       { q: "Quelle caution les propriétaires peuvent-ils demander ?", r: "En pratique, la caution au Maroc est généralement d'1 à 2 mois de loyer. Elle doit être restituée en fin de bail si le logement est rendu en bon état." },
       { q: "Le loyer est-il négociable ?", r: "Cela dépend du propriétaire. La messagerie vous permet de discuter des conditions avant de vous engager." },
-      { q: "StudentHome.ma prend-il une commission ?", r: "Actuellement non. La plateforme est gratuite pour les étudiants et les propriétaires." },
+      { q: "Bayt-Talib prend-il une commission ?", r: "Actuellement non. La plateforme est gratuite pour les étudiants et les propriétaires." },
       { q: "Que faire si un propriétaire demande un virement avant visite ?", r: "N'envoyez jamais d'argent sans avoir visité le logement et signé un contrat. Signalez-le immédiatement à notre équipe via le bouton « Signaler »." },
     ],
   },
@@ -115,12 +115,12 @@ export default function HelpPage() {
               <p className="text-gray-400 text-sm font-light">Réponse en moins d&apos;une heure.</p>
             </Link>
 
-            <a href="mailto:support@studenthome.ma" className="group bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8 text-center hover:shadow-lg transition-all">
+            <a href="mailto:sehajjimi@gmail.com" className="group bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8 text-center hover:shadow-lg transition-all">
               <div className="w-12 h-12 bg-accent/10 rounded-2xl flex items-center justify-center text-accent mx-auto mb-4 group-hover:scale-110 transition-transform">
                 <Mail className="w-6 h-6" />
               </div>
               <h3 className="font-black text-primary mb-2">Email</h3>
-              <p className="text-gray-400 text-sm font-light">support@studenthome.ma</p>
+              <p className="text-gray-400 text-sm font-light">sehajjimi@gmail.com</p>
             </a>
 
             <a href="tel:+212522000000" className="group bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8 text-center hover:shadow-lg transition-all">
