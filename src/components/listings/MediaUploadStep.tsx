@@ -30,17 +30,24 @@ export default function MediaUploadStep({
 
   /* ── Cloudinary upload ──────────────────────────────────────── */
   async function uploadFile(file: File, resourceType: "image" | "video"): Promise<string> {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET ?? "ml_default");
-    formData.append("cloud_name", process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ?? "");
-    formData.append("resource_type", resourceType);
+    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME!;
+    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!;
+
+    const body = new FormData();
+    body.append("file", file);
+    body.append("upload_preset", uploadPreset);
+    body.append("folder", "bayt-talib/listings");
 
     const res = await fetch(
-      `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ?? "demo"}/${resourceType}/upload`,
-      { method: "POST", body: formData }
+      `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`,
+      { method: "POST", body }
     );
-    if (!res.ok) throw new Error("Upload échoué");
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err?.error?.message ?? "Upload échoué");
+    }
+
     const data = await res.json();
     return data.secure_url as string;
   }

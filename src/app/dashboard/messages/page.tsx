@@ -25,7 +25,8 @@ export default async function MessagesPage({
     include: {
       sender: { select: { id: true, name: true } },
       receiver: { select: { id: true, name: true } },
-      listing: { select: { id: true, title: true } },
+      listing: { select: { id: true, title: true, hostId: true } },
+      visitRequest: { select: { id: true, proposedAt: true, status: true } },
     },
     orderBy: { createdAt: "desc" },
   });
@@ -33,7 +34,7 @@ export default async function MessagesPage({
   // Group into conversation threads (by partner + listing)
   const threads = new Map<
     string,
-    { key: string; partner: { id: string; name: string | null }; listingTitle: string | null; listingId: string | null; lastMessage: string; lastAt: Date; unread: number }
+    { key: string; partner: { id: string; name: string | null }; listingTitle: string | null; listingId: string | null; hostId: string | null; lastMessage: string; lastAt: Date; unread: number }
   >();
 
   for (const msg of allMessages) {
@@ -45,6 +46,7 @@ export default async function MessagesPage({
         partner,
         listingTitle: msg.listing?.title ?? null,
         listingId: msg.listingId ?? null,
+        hostId: msg.listing?.hostId ?? null,
         lastMessage: msg.content,
         lastAt: msg.createdAt,
         unread: 0,
@@ -146,11 +148,19 @@ export default async function MessagesPage({
                   createdAt: m.createdAt,
                   isOwn: m.senderId === userId,
                   senderName: m.sender.name ?? "?",
+                  visitRequest: m.visitRequest
+                    ? {
+                        id: m.visitRequest.id,
+                        proposedAt: m.visitRequest.proposedAt,
+                        status: m.visitRequest.status as "PENDING" | "ACCEPTED" | "REJECTED",
+                      }
+                    : null,
                 }))}
                 currentUserId={userId}
                 receiverId={activeThread.partner.id}
                 listingId={activeThread.listingId ?? undefined}
                 partnerName={activeThread.partner.name ?? "Utilisateur"}
+                hostId={activeThread.hostId ?? undefined}
               />
             ) : (
               <div className="flex flex-col items-center justify-center h-full p-8 text-center">

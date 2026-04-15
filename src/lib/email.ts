@@ -12,7 +12,9 @@ export async function sendVerificationEmail(
 
   try {
     await resend.emails.send({
-      from: "Bayt-Talib <noreply@bayt-talib.ma>",
+      // Use Resend's shared sending domain (free tier). Once you verify
+      // your own domain on resend.com, replace with: noreply@bayt-talib.ma
+      from: "Bayt-Talib <onboarding@resend.dev>",
       to: email,
       subject: "Vérifiez votre adresse email — Bayt-Talib",
       html: `

@@ -27,6 +27,12 @@ enum ListingType {
   STANDARD   // Annonce standard (hôte professionnel)
 }
 
+enum VisitRequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
 enum BookingStatus {
   INQUIRY
   APPLICATION_SENT
@@ -74,6 +80,9 @@ model User {
   applicationFile  ApplicationFile?
   hostedVisitSlots VisitSlot[]      @relation("HostVisits")
   bookedVisitSlots VisitSlot[]      @relation("BookedVisits")
+
+  sentVisitRequests     VisitRequest[] @relation("TenantVisitRequests")
+  receivedVisitRequests VisitRequest[] @relation("HostVisitRequests")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -125,6 +134,7 @@ model Listing {
   bookingRequests BookingRequest[]
   messages        Message[]
   visitSlots      VisitSlot[]
+  visitRequests   VisitRequest[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -193,6 +203,9 @@ model Message {
   bookingRequestId String?
   bookingRequest   BookingRequest? @relation(fields: [bookingRequestId], references: [id], onDelete: SetNull)
 
+  visitRequestId String?       @unique
+  visitRequest   VisitRequest? @relation(fields: [visitRequestId], references: [id], onDelete: SetNull)
+
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
 }
@@ -239,6 +252,22 @@ model ApplicationFile {
   durationMonths Int?
 
   isComplete Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VisitRequest {
+  id         String             @id @default(cuid())
+  listingId  String
+  listing    Listing            @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  tenantId   String
+  tenant     User               @relation("TenantVisitRequests", fields: [tenantId], references: [id], onDelete: Cascade)
+  hostId     String
+  host       User               @relation("HostVisitRequests", fields: [hostId], references: [id], onDelete: Cascade)
+  proposedAt DateTime
+  status     VisitRequestStatus @default(PENDING)
+  message    Message?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

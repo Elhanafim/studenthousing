@@ -97,6 +97,97 @@ export async function getListingVisitSlots(listingId: string) {
   return slots;
 }
 
+// ─── Visit Request (student proposes date → host accepts/rejects) ─────────────
+
+export async function sendVisitRequest(data: {
+  listingId: string;
+  hostId: string;
+  proposedAt: string; // ISO string
+}) {
+  const session = await auth();
+  if (!session?.user) return { error: "Non autorisé." };
+  const tenantId = (session.user as any).id as string;
+
+  if (tenantId === data.hostId) return { error: "Vous ne pouvez pas vous envoyer une demande." };
+
+  const proposedDate = new Date(data.proposedAt);
+  if (isNaN(proposedDate.getTime()) || proposedDate < new Date()) {
+    return { error: "La date proposée doit être dans le futur." };
+  }
+
+  const listing = await prisma.listing.findUnique({ where: { id: data.listingId }, select: { title: true } });
+  if (!listing) return { error: "Annonce introuvable." };
+
+  const visitRequest = await prisma.visitRequest.create({
+    data: {
+      listingId: data.listingId,
+      tenantId,
+      hostId: data.hostId,
+      proposedAt: proposedDate,
+    },
+  });
+
+  const dateStr = proposedDate.toLocaleDateString("fr-MA", {
+    weekday: "long", day: "numeric", month: "long", year: "numeric",
+  });
+  const timeStr = proposedDate.toLocaleTimeString("fr-MA", { hour: "2-digit", minute: "2-digit" });
+
+  await prisma.message.create({
+    data: {
+      senderId: tenantId,
+      receiverId: data.hostId,
+      listingId: data.listingId,
+      visitRequestId: visitRequest.id,
+      content: `📅 Demande de visite pour le ${dateStr} à ${timeStr} — ${listing.title}`,
+    },
+  });
+
+  revalidatePath("/dashboard/messages");
+  revalidatePath(`/listings/${data.listingId}`);
+  return { success: true };
+}
+
+export async function respondToVisitRequest(visitRequestId: string, response: "ACCEPTED" | "REJECTED") {
+  const session = await auth();
+  if (!session?.user) return { error: "Non autorisé." };
+  const userId = (session.user as any).id as string;
+
+  const vr = await prisma.visitRequest.findUnique({
+    where: { id: visitRequestId },
+    include: { listing: { select: { title: true } } },
+  });
+  if (!vr) return { error: "Demande introuvable." };
+  if (vr.hostId !== userId) return { error: "Non autorisé." };
+  if (vr.status !== "PENDING") return { error: "Cette demande a déjà été traitée." };
+
+  await prisma.visitRequest.update({
+    where: { id: visitRequestId },
+    data: { status: response },
+  });
+
+  const dateStr = vr.proposedAt.toLocaleDateString("fr-MA", {
+    weekday: "long", day: "numeric", month: "long",
+  });
+  const timeStr = vr.proposedAt.toLocaleTimeString("fr-MA", { hour: "2-digit", minute: "2-digit" });
+
+  const replyContent =
+    response === "ACCEPTED"
+      ? `✅ Visite acceptée ! Je vous confirme le rendez-vous le ${dateStr} à ${timeStr}. À bientôt !`
+      : `❌ Visite refusée. Je ne suis pas disponible à cette date. N'hésitez pas à proposer un autre créneau.`;
+
+  await prisma.message.create({
+    data: {
+      senderId: userId,
+      receiverId: vr.tenantId,
+      listingId: vr.listingId,
+      content: replyContent,
+    },
+  });
+
+  revalidatePath("/dashboard/messages");
+  return { success: true };
+}
+
 export async function getHostVisitSlots(hostId: string) {
   const slots = await prisma.visitSlot.findMany({
     where: { hostId },
