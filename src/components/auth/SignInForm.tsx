@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff, ArrowRight, RefreshCw, CheckCircle } from "lucide-react";
 
@@ -40,7 +40,10 @@ export default function SignInForm() {
         setError("Email ou mot de passe incorrect.");
       }
     } else {
-      router.push("/dashboard");
+      // Check role to redirect admin to /admin, everyone else to /dashboard
+      const session = await getSession();
+      const role = (session?.user as any)?.role;
+      router.push(role === "ADMIN" ? "/admin" : "/dashboard");
       router.refresh();
     }
   };
