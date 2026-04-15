@@ -28,10 +28,14 @@ export default function MediaUploadStep({
   const [vidError, setVidError] = useState("");
   const [dragOver, setDragOver] = useState<"image" | "video" | null>(null);
 
-  /* ── Cloudinary upload ──────────────────────────────────────── */
+  /* ── Cloudinary unsigned upload ─────────────────────────────── */
   async function uploadFile(file: File, resourceType: "image" | "video"): Promise<string> {
-    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME!;
-    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!;
+    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+
+    if (!cloudName || !uploadPreset) {
+      throw new Error("Configuration Cloudinary manquante (NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME / UPLOAD_PRESET).");
+    }
 
     const body = new FormData();
     body.append("file", file);
@@ -43,12 +47,15 @@ export default function MediaUploadStep({
       { method: "POST", body }
     );
 
+    const data = await res.json();
+
     if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err?.error?.message ?? "Upload échoué");
+      // Surface the real Cloudinary message (e.g. "Upload preset not found" or "unsigned preset required")
+      const msg: string = data?.error?.message ?? `Cloudinary error ${res.status}`;
+      console.error("[Cloudinary upload error]", res.status, data);
+      throw new Error(msg);
     }
 
-    const data = await res.json();
     return data.secure_url as string;
   }
 
@@ -75,8 +82,8 @@ export default function MediaUploadStep({
     try {
       const urls = await Promise.all(valid.map((f) => uploadFile(f, "image")));
       onImagesChange([...images, ...urls]);
-    } catch {
-      setImgError("Erreur lors de l'upload. Réessayez.");
+    } catch (err: any) {
+      setImgError(err?.message ?? "Erreur lors de l'upload. Réessayez.");
     } finally {
       setImgUploading(false);
     }
@@ -100,8 +107,8 @@ export default function MediaUploadStep({
     try {
       const url = await uploadFile(file, "video");
       onVideosChange([...videos, url]);
-    } catch {
-      setVidError("Erreur lors de l'upload. Réessayez.");
+    } catch (err: any) {
+      setVidError(err?.message ?? "Erreur lors de l'upload. Réessayez.");
     } finally {
       setVidUploading(false);
     }
