@@ -52,11 +52,18 @@ export async function registerUser(formData: z.infer<typeof registerSchema>) {
       data: { token, email: user.email!, expiresAt },
     });
 
-    // Send verification email (non-blocking — if Resend not configured, registration still succeeds)
+    // Send verification email — if it fails, delete the user so they can retry cleanly
     try {
       await sendVerificationEmail(user.email!, token, user.name ?? undefined);
     } catch (err) {
-      console.error("Failed to send verification email:", err);
+      console.error("[registerUser] Email send failed:", err);
+      // Roll back: remove token and user so the signup form shows a real error
+      await prisma.verificationToken.delete({ where: { token } }).catch(() => {});
+      await prisma.user.delete({ where: { id: user.id } }).catch(() => {});
+      return {
+        error:
+          "Impossible d'envoyer l'email de vérification. Vérifiez votre adresse ou réessayez dans quelques minutes.",
+      };
     }
 
     return { success: true, userId: user.id };

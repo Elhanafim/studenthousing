@@ -5,13 +5,20 @@ export async function sendVerificationEmail(
   token: string,
   name?: string
 ) {
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error("RESEND_API_KEY is not set in environment variables.");
+  }
+
   const resend = new Resend(process.env.RESEND_API_KEY);
+
+  // On Vercel production use NEXTAUTH_URL (must be set to your real domain).
+  // Fallback to localhost for local dev only.
   const baseUrl = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
   const verifyUrl = `${baseUrl}/api/auth/verify-email?token=${token}`;
   const displayName = name ?? "étudiant(e)";
 
   try {
-    await resend.emails.send({
+    const { data, error } = await resend.emails.send({
       // Use Resend's shared sending domain (free tier). Once you verify
       // your own domain on resend.com, replace with: noreply@bayt-talib.ma
       from: "Bayt-Talib <onboarding@resend.dev>",
@@ -71,8 +78,13 @@ export async function sendVerificationEmail(
         </div>
       `,
     });
+    if (error) {
+      console.error("[Resend] API returned an error:", JSON.stringify(error));
+      throw new Error(error.message ?? "Resend API error");
+    }
+    console.log("[Resend] Email sent successfully, id:", data?.id);
   } catch (error) {
-    console.error("Email send failed:", error);
+    console.error("[Resend] sendVerificationEmail threw:", error);
     throw error;
   }
 }

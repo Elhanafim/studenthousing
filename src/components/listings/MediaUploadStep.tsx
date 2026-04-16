@@ -28,35 +28,20 @@ export default function MediaUploadStep({
   const [vidError, setVidError] = useState("");
   const [dragOver, setDragOver] = useState<"image" | "video" | null>(null);
 
-  /* ── Cloudinary unsigned upload ─────────────────────────────── */
+  /* ── Upload via server-side proxy (/api/upload → Cloudinary) ── */
   async function uploadFile(file: File, resourceType: "image" | "video"): Promise<string> {
-    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
-
-    if (!cloudName || !uploadPreset) {
-      throw new Error("Configuration Cloudinary manquante (NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME / UPLOAD_PRESET).");
-    }
-
     const body = new FormData();
     body.append("file", file);
-    body.append("upload_preset", uploadPreset);
-    body.append("folder", "bayt-talib/listings");
+    body.append("resourceType", resourceType);
 
-    const res = await fetch(
-      `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`,
-      { method: "POST", body }
-    );
-
-    const data = await res.json();
+    const res = await fetch("/api/upload", { method: "POST", body });
+    const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {
-      // Surface the real Cloudinary message (e.g. "Upload preset not found" or "unsigned preset required")
-      const msg: string = data?.error?.message ?? `Cloudinary error ${res.status}`;
-      console.error("[Cloudinary upload error]", res.status, data);
-      throw new Error(msg);
+      throw new Error(data?.error ?? `Erreur serveur (${res.status})`);
     }
 
-    return data.secure_url as string;
+    return data.url as string;
   }
 
   async function handleImageFiles(files: File[]) {
