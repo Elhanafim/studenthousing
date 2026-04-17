@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { createListing } from "@/lib/actions/listings";
 import { MOROCCO_CITIES } from "@/lib/moroccoCities";
+import MediaUploadStep from "@/components/listings/MediaUploadStep";
 
 type Step = 1 | 2 | 3 | 4 | 5 | 6;
 
@@ -53,7 +54,8 @@ export default function CreateListingWizard() {
     amenities: [] as string[],
     safetyFeatures: [] as string[],
     houseRules: [] as string[],
-    images: ["https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=2070"],
+    images: [] as string[],
+    videos: [] as string[],
     availableFrom: "",
     minDuration: 1,
   });
@@ -337,7 +339,7 @@ export default function CreateListingWizard() {
             </motion.div>
           )}
 
-          {/* ── Step 4 : Photos (placeholder) ── */}
+          {/* ── Step 4 : Photos & Vidéos ── */}
           {step === 4 && (
             <motion.div key="s4" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-8">
               <button onClick={prevStep} className="text-gray-400 flex items-center gap-2 font-bold text-sm hover:text-accent"><ArrowLeft className="w-4 h-4" /> Retour</button>
@@ -349,17 +351,28 @@ export default function CreateListingWizard() {
                 </div>
               </div>
 
-              <div className="border-4 border-dashed border-gray-100 rounded-[2.5rem] p-20 text-center hover:border-accent/30 transition-all cursor-pointer bg-gray-50/50">
-                <Camera className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                <div className="text-lg font-bold text-gray-500">Glissez-déposez vos photos ici</div>
-                <p className="text-sm text-gray-400 font-light mt-2">
-                  L&apos;upload d&apos;images sera disponible prochainement. Une image par défaut est utilisée.
-                </p>
-              </div>
+              <MediaUploadStep
+                images={formData.images}
+                videos={formData.videos}
+                onImagesChange={(urls) => setFormData((p) => ({ ...p, images: urls }))}
+                onVideosChange={(urls) => setFormData((p) => ({ ...p, videos: urls }))}
+              />
 
-              <button onClick={nextStep} className="w-full md:w-auto px-12 py-4 rounded-2xl clay-gradient text-white font-bold flex items-center justify-center gap-2">
+              <button
+                onClick={() => {
+                  if (formData.images.length < 2) {
+                    setError("Veuillez ajouter au moins 2 photos avant de continuer.");
+                    return;
+                  }
+                  setError("");
+                  nextStep();
+                }}
+                className="w-full md:w-auto px-12 py-4 rounded-2xl clay-gradient text-white font-bold flex items-center justify-center gap-2"
+              >
                 Continuer <ArrowRight className="w-5 h-5" />
               </button>
+
+              {error && <p className="text-red-500 text-sm">{error}</p>}
             </motion.div>
           )}
 

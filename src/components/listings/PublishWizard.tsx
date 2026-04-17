@@ -133,6 +133,7 @@ export default function PublishWizard() {
       listingType,
       isStudentHost: true,
       images,
+      videos,
       availableFrom: formData.availableFrom || undefined,
     };
 

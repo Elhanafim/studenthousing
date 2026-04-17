@@ -11,9 +11,12 @@ export async function sendVerificationEmail(
 
   const resend = new Resend(process.env.RESEND_API_KEY);
 
-  // On Vercel production use NEXTAUTH_URL (must be set to your real domain).
-  // Fallback to localhost for local dev only.
-  const baseUrl = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
+  // NEXT_PUBLIC_APP_URL must be set to your deployed domain in Vercel env vars.
+  // e.g. https://bayt-talib.vercel.app — without it, links will point to localhost.
+  const baseUrl =
+    process.env.NEXT_PUBLIC_APP_URL ??
+    process.env.NEXTAUTH_URL ??
+    "http://localhost:3000";
   const verifyUrl = `${baseUrl}/api/auth/verify-email?token=${token}`;
   const displayName = name ?? "étudiant(e)";
 

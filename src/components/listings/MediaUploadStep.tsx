@@ -12,7 +12,7 @@ interface MediaUploadStepProps {
 }
 
 const MAX_IMAGES = 10;
-const MAX_IMAGE_MB = 5;
+const MAX_IMAGE_MB = 4;
 const MAX_VIDEO_MB = 100;
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const ALLOWED_VIDEO_TYPES = ["video/mp4", "video/quicktime", "video/webm"];
