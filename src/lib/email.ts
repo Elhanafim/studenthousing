@@ -1,93 +1,151 @@
-import { Resend } from "resend";
+// Brevo transactional email — replaces Resend
+// API docs: https://developers.brevo.com/reference/sendtransacemail
+
+const BREVO_API_URL = "https://api.brevo.com/v3/smtp/email";
+
+function getAppUrl(): string {
+  // Priority: APP_URL → NEXT_PUBLIC_APP_URL → NEXTAUTH_URL → localhost
+  // Set APP_URL in Vercel env vars to your deployed domain (no trailing slash)
+  // e.g. https://studenthome.ma or https://yourapp.vercel.app
+  return (
+    process.env.APP_URL ??
+    process.env.NEXT_PUBLIC_APP_URL ??
+    process.env.NEXTAUTH_URL ??
+    "http://localhost:3000"
+  );
+}
 
 export async function sendVerificationEmail(
   email: string,
-  token: string,
+  rawToken: string,
   name?: string
-) {
-  if (!process.env.RESEND_API_KEY) {
-    throw new Error("RESEND_API_KEY is not set in environment variables.");
+): Promise<void> {
+  const apiKey = process.env.BREVO_API_KEY;
+  if (!apiKey) {
+    throw new Error("[brevo] BREVO_API_KEY is not set.");
   }
 
-  const resend = new Resend(process.env.RESEND_API_KEY);
+  const senderEmail = process.env.EMAIL_FROM;
+  if (!senderEmail) {
+    throw new Error("[brevo] EMAIL_FROM is not set.");
+  }
 
-  // NEXT_PUBLIC_APP_URL must be set to your deployed domain in Vercel env vars.
-  // e.g. https://bayt-talib.vercel.app — without it, links will point to localhost.
-  const baseUrl =
-    process.env.NEXT_PUBLIC_APP_URL ??
-    process.env.NEXTAUTH_URL ??
-    "http://localhost:3000";
-  const verifyUrl = `${baseUrl}/api/auth/verify-email?token=${token}`;
+  const baseUrl = getAppUrl();
+  const verifyUrl = `${baseUrl}/api/auth/verify-email?token=${rawToken}`;
   const displayName = name ?? "étudiant(e)";
 
-  try {
-    const { data, error } = await resend.emails.send({
-      // Use Resend's shared sending domain (free tier). Once you verify
-      // your own domain on resend.com, replace with: noreply@bayt-talib.ma
-      from: "Bayt-Talib <onboarding@resend.dev>",
-      to: email,
-      subject: "Vérifiez votre adresse email — Bayt-Talib",
-      html: `
-        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 520px; margin: 0 auto; padding: 40px 24px; background: #ffffff;">
-          <!-- Header -->
-          <div style="text-align: center; margin-bottom: 32px;">
-            <h1 style="font-size: 28px; font-weight: 700; color: #1a1a2e; margin: 0 0 4px;">
-              Bayt-Talib
-            </h1>
-            <p style="font-size: 13px; color: #888; margin: 0; font-style: italic;">
-              Logement étudiant au Maroc
-            </p>
-          </div>
+  console.log(`[brevo] Sending verification email to ${email}`);
+  console.log(`[brevo] Verify URL base: ${baseUrl}`);
 
-          <!-- Body -->
-          <div style="background: #f8f9ff; border-radius: 16px; padding: 32px; margin-bottom: 24px;">
-            <h2 style="font-size: 20px; font-weight: 600; color: #1a1a2e; margin: 0 0 12px;">
-              Bonjour ${displayName} 👋
-            </h2>
-            <p style="font-size: 15px; color: #444; line-height: 1.6; margin: 0 0 24px;">
-              Merci de vous être inscrit(e) sur Bayt-Talib.<br>
-              Cliquez sur le bouton ci-dessous pour activer votre compte et accéder
-              à des milliers de logements étudiants au Maroc.
-            </p>
+  const payload = {
+    sender: { name: "StudentHome.ma", email: senderEmail },
+    to: [{ email }],
+    subject: "Confirmez votre adresse email — StudentHome.ma",
+    htmlContent: buildEmailHtml(displayName, verifyUrl, baseUrl),
+    textContent: buildEmailText(displayName, verifyUrl),
+  };
 
-            <!-- CTA Button -->
-            <div style="text-align: center;">
-              <a href="${verifyUrl}"
-                 style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #2563eb, #7c3aed); color: #ffffff; border-radius: 10px; text-decoration: none; font-size: 15px; font-weight: 600; letter-spacing: 0.02em;">
-                Confirmer mon email
-              </a>
-            </div>
-          </div>
+  const res = await fetch(BREVO_API_URL, {
+    method: "POST",
+    headers: {
+      "api-key": apiKey,
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
 
-          <!-- Fallback link -->
-          <p style="font-size: 12px; color: #999; margin: 0 0 8px;">
-            Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :
-          </p>
-          <p style="font-size: 11px; word-break: break-all; color: #2563eb; margin: 0 0 24px;">
-            ${verifyUrl}
-          </p>
-
-          <!-- Footer -->
-          <hr style="border: none; border-top: 1px solid #eee; margin: 0 0 16px;" />
-          <p style="font-size: 11px; color: #bbb; margin: 0; line-height: 1.5;">
-            Ce lien expire dans <strong>24 heures</strong>. Si vous n'êtes pas à l'origine
-            de cette inscription, ignorez cet email — votre adresse ne sera pas utilisée.<br><br>
-            Si le lien a expiré, rendez-vous sur
-            <a href="${baseUrl}/auth/signin" style="color: #2563eb; text-decoration: none;">
-              la page de connexion
-            </a>
-            et cliquez sur &quot;Renvoyer l'email de vérification&quot;.
-          </p>
-        </div>
-      `,
-    });
-    if (error) {
-      console.error("[Resend] API returned an error:", JSON.stringify(error));
-      throw new Error(error.message ?? "Resend API error");
+  if (!res.ok) {
+    let errorBody: unknown;
+    try {
+      errorBody = await res.json();
+    } catch {
+      errorBody = await res.text();
     }
-    console.log("[Resend] Email sent successfully, id:", data?.id);
-  } catch (error) {
-    console.error("[Resend] sendVerificationEmail threw:", error);
-    throw error;
+    console.error(`[brevo] API error ${res.status}:`, JSON.stringify(errorBody));
+    throw new Error(`[brevo] Failed to send email (HTTP ${res.status})`);
   }
+
+  const data = await res.json() as { messageId?: string };
+  console.log(`[brevo] Email sent successfully to ${email}, messageId: ${data.messageId ?? "n/a"}`);
+}
+
+function buildEmailHtml(displayName: string, verifyUrl: string, baseUrl: string): string {
+  return `
+<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f5f5f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  <div style="max-width:520px;margin:40px auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+
+    <!-- Header -->
+    <div style="background:linear-gradient(135deg,#1e40af,#7c3aed);padding:32px 24px;text-align:center;">
+      <h1 style="margin:0;color:#ffffff;font-size:24px;font-weight:700;letter-spacing:-0.02em;">StudentHome.ma</h1>
+      <p style="margin:4px 0 0;color:rgba(255,255,255,0.75);font-size:13px;">Logement étudiant au Maroc</p>
+    </div>
+
+    <!-- Body -->
+    <div style="padding:32px 28px;">
+      <h2 style="margin:0 0 12px;color:#111827;font-size:20px;font-weight:600;">
+        Bonjour ${displayName} 👋
+      </h2>
+      <p style="margin:0 0 8px;color:#374151;font-size:15px;line-height:1.6;">
+        Bienvenue sur <strong>StudentHome.ma</strong> — la plateforme de logement étudiant au Maroc.
+      </p>
+      <p style="margin:0 0 28px;color:#374151;font-size:15px;line-height:1.6;">
+        Cliquez sur le bouton ci-dessous pour confirmer votre adresse email et activer votre compte.
+        Ce lien est valable <strong>24 heures</strong>.
+      </p>
+
+      <!-- CTA -->
+      <div style="text-align:center;margin-bottom:28px;">
+        <a href="${verifyUrl}"
+           style="display:inline-block;padding:14px 36px;background:linear-gradient(135deg,#1e40af,#7c3aed);color:#ffffff;border-radius:10px;text-decoration:none;font-size:15px;font-weight:600;letter-spacing:0.01em;">
+          Confirmer mon email
+        </a>
+      </div>
+
+      <!-- Security note -->
+      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:14px 16px;margin-bottom:24px;">
+        <p style="margin:0;color:#6b7280;font-size:12px;line-height:1.6;">
+          🔒 Si vous n'avez pas créé de compte sur StudentHome.ma, ignorez cet email.
+          Votre adresse ne sera pas utilisée.
+        </p>
+      </div>
+
+      <!-- Fallback link -->
+      <p style="margin:0 0 4px;color:#9ca3af;font-size:12px;">Si le bouton ne fonctionne pas, copiez ce lien :</p>
+      <p style="margin:0 0 24px;font-size:11px;word-break:break-all;">
+        <a href="${verifyUrl}" style="color:#1e40af;text-decoration:none;">${verifyUrl}</a>
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div style="background:#f9fafb;border-top:1px solid #e5e7eb;padding:16px 28px;text-align:center;">
+      <p style="margin:0;color:#9ca3af;font-size:11px;line-height:1.5;">
+        Lien expiré ?
+        <a href="${baseUrl}/auth/signin" style="color:#1e40af;text-decoration:none;">
+          Renvoyer l'email de vérification
+        </a>
+        depuis la page de connexion.
+      </p>
+    </div>
+  </div>
+</body>
+</html>`.trim();
+}
+
+function buildEmailText(displayName: string, verifyUrl: string): string {
+  return [
+    `Bonjour ${displayName},`,
+    "",
+    "Bienvenue sur StudentHome.ma — la plateforme de logement étudiant au Maroc.",
+    "",
+    "Confirmez votre adresse email en cliquant sur ce lien (valable 24h) :",
+    verifyUrl,
+    "",
+    "Si vous n'avez pas créé de compte, ignorez cet email.",
+    "",
+    "— L'équipe StudentHome.ma",
+  ].join("\n");
 }

@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { requireVerifiedUser } from "@/lib/auth-guard";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -13,9 +14,11 @@ const messageSchema = z.object({
 });
 
 export async function sendMessage(data: z.infer<typeof messageSchema>) {
-  const session = await auth();
-  if (!session?.user) return { error: "Non autorisé." };
-  const senderId = (session.user as any).id as string;
+  const guard = await requireVerifiedUser();
+  if (!guard.ok) return { error: guard.error };
+  const senderId = guard.userId;
+
+  console.log(`[message] sendMessage called by user ${senderId}`);
 
   try {
     const validated = messageSchema.parse(data);

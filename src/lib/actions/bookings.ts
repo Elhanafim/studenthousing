@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { requireVerifiedUser } from "@/lib/auth-guard";
 import { BookingStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -24,9 +25,11 @@ const TRANSITIONS: Record<BookingStatus, BookingStatus[]> = {
 };
 
 export async function createBookingRequest(data: z.infer<typeof bookingSchema>) {
-  const session = await auth();
-  if (!session?.user) return { error: "Non autorisé." };
-  const tenantId = (session.user as any).id as string;
+  const guard = await requireVerifiedUser();
+  if (!guard.ok) return { error: guard.error };
+  const tenantId = guard.userId;
+
+  console.log(`[booking] createBookingRequest called by user ${tenantId}`);
 
   try {
     const validated = bookingSchema.parse(data);

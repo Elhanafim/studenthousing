@@ -1,8 +1,9 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { z } from "zod";
 import { auth } from "@/lib/auth";
+import { z } from "zod";
+import { requireVerifiedUser } from "@/lib/auth-guard";
 import { revalidatePath } from "next/cache";
 
 const listingSchema = z.object({
@@ -42,11 +43,11 @@ const listingSchema = z.object({
 
 export async function createListing(data: z.infer<typeof listingSchema>) {
   try {
-    const session = await auth();
-    if (!session?.user) return { error: "Non autorisé. Veuillez vous connecter." };
+    const guard = await requireVerifiedUser();
+    if (!guard.ok) return { error: guard.error };
+    const hostId = guard.userId;
 
-    const hostId = (session.user as any).id as string;
-    if (!hostId) return { error: "Session invalide. Veuillez vous reconnecter." };
+    console.log(`[listing] createListing called by user ${hostId}`);
 
     const validatedData = listingSchema.parse(data);
 

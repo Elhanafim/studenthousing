@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
+import { requireVerifiedUser } from "@/lib/auth-guard";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -34,9 +34,11 @@ function computeDossierCompleteness(data: DossierFormData): boolean {
 }
 
 export async function upsertDossier(data: DossierFormData) {
-  const session = await auth();
-  if (!session?.user) return { error: "Non autorisé." };
-  const userId = (session.user as any).id as string;
+  const guard = await requireVerifiedUser();
+  if (!guard.ok) return { error: guard.error };
+  const userId = guard.userId;
+
+  console.log(`[dossier] upsertDossier called by user ${userId}`);
 
   try {
     const validated = dossierSchema.parse(data);
