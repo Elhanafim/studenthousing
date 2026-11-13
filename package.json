@@ -2,6 +2,9 @@
   "name": "student-housing-morocco",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -12,39 +15,41 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
-    "@prisma/adapter-pg": "^7.7.0",
-    "@prisma/client": "^7.7.0",
+    "@prisma/adapter-pg": "^7.10.1",
+    "@prisma/client": "^7.10.1",
     "bcryptjs": "^3.0.3",
     "clsx": "^2.1.1",
     "framer-motion": "^12.38.0",
     "lucide-react": "^1.8.0",
-    "next": "16.2.3",
-    "next-auth": "^5.0.0-beta.30",
-    "nodemailer": "^7.0.13",
-    "prisma": "^7.7.0",
-    "react": "19.2.4",
-    "react-dom": "19.2.4",
+    "next": "16.4.6",
+    "next-auth": "^5.0.0-beta.32",
+    "prisma": "^7.10.1",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
     "react-hook-form": "^7.72.1",
-    "resend": "^6.11.0",
     "tailwind-merge": "^3.5.0",
-    "zod": "^4.3.6"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
-    "@types/nodemailer": "^8.0.0",
     "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "dotenv": "^16.6.1",
     "eslint": "^9",
-    "eslint-config-next": "16.2.3",
+    "eslint-config-next": "16.4.6",
     "pg": "^8.20.0",
     "tailwindcss": "^4",
-    "tsx": "^4.21.0",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   },
   "prisma": {
     "seed": "npx tsx --env-file=.env prisma/seed.ts"
+  },
+  "overrides": {
+    "@typescript-eslint/typescript-estree": {
+      "minimatch": "^11.0.1"
+    }
   }
 }
