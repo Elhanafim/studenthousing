@@ -1,9 +1,12 @@
+import { createHash } from "node:crypto";
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 
-// Required Vercel env vars: CLOUDINARY_CLOUD_NAME, CLOUDINARY_UPLOAD_PRESET
-// The upload preset MUST be set to "Unsigned" in your Cloudinary dashboard:
-// console.cloudinary.com → Settings → Upload → Upload presets → bayt-talib → Signing Mode: Unsigned
+// Required env vars: CLOUDINARY_CLOUD_NAME, CLOUDINARY_UPLOAD_PRESET
+// Recommended: CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET. When both are set,
+// uploads are signed; then switch the preset's Signing Mode to "Signed" in
+// console.cloudinary.com → Settings → Upload → Upload presets, so nobody can
+// upload to the account directly with the (public) cloud name and preset name.
 
 const ALLOWED_IMAGE = ["image/jpeg", "image/png", "image/webp"];
 const ALLOWED_VIDEO = ["video/mp4", "video/quicktime", "video/webm"];
@@ -35,8 +38,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Impossible de lire le fichier envoyé." }, { status: 400 });
   }
 
-  const file         = formData.get("file") as File | null;
-  const resourceType = (formData.get("resourceType") as string | null) ?? "image";
+  const file = formData.get("file") as File | null;
 
   if (!file) {
     return NextResponse.json({ error: "Aucun fichier fourni." }, { status: 400 });
@@ -52,6 +54,10 @@ export async function POST(request: Request) {
     );
   }
 
+  // Derived from the validated MIME type, never from client input: a client-chosen
+  // value could request "raw" uploads of arbitrary files or alter the API path.
+  const resourceType = isVideo ? "video" : "image";
+
   const maxBytes = isVideo ? MAX_VIDEO_BYTES : MAX_IMAGE_BYTES;
   if (file.size > maxBytes) {
     const limit = isVideo ? "100 Mo" : "4 Mo";
@@ -61,10 +67,22 @@ export async function POST(request: Request) {
     );
   }
 
+  const folder = "bayt-talib/listings";
   const cldForm = new FormData();
   cldForm.append("file", file);
   cldForm.append("upload_preset", uploadPreset);
-  cldForm.append("folder", "bayt-talib/listings");
+  cldForm.append("folder", folder);
+
+  const apiKey    = process.env.CLOUDINARY_API_KEY;
+  const apiSecret = process.env.CLOUDINARY_API_SECRET;
+  if (apiKey && apiSecret) {
+    // Cloudinary signature: SHA-1 of the signed params (sorted, "&"-joined) + API secret.
+    const timestamp = Math.floor(Date.now() / 1000).toString();
+    const toSign = `folder=${folder}&timestamp=${timestamp}&upload_preset=${uploadPreset}`;
+    cldForm.append("api_key", apiKey);
+    cldForm.append("timestamp", timestamp);
+    cldForm.append("signature", createHash("sha1").update(toSign + apiSecret).digest("hex"));
+  }
 
   let cldRes: Response;
   try {
@@ -82,7 +100,7 @@ export async function POST(request: Request) {
   if (!cldRes.ok) {
     const msg: string = cldData?.error?.message ?? `Cloudinary error ${cldRes.status}`;
     console.error("[upload] Cloudinary rejected the upload:", cldRes.status, JSON.stringify(cldData));
-    // Common cause: upload preset is not set to "Unsigned" in Cloudinary dashboard
+    // Common cause: preset signing mode does not match the configured credentials
     return NextResponse.json({ error: msg }, { status: 502 });
   }
 
